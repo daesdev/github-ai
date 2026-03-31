@@ -7,7 +7,7 @@ set -e
 
 echo "🚀 GitHub AI Setup"
 
-# Default base URL - change this to your repo
+# Default base URL
 BASE_URL="${GITHUB_AI_BASE_URL:-https://raw.githubusercontent.com/daesdev/github-ai/main}"
 
 # Check if we have stdin (curl | bash) or running locally
@@ -40,80 +40,20 @@ install_from_github() {
     fi
     echo "$pr_file" > "$temp_dir/pr-description.md"
     
-    # Download settings.json
-    echo "  Downloading settings.json..."
-    local settings_file=$(curl -sL "$BASE_URL/.vscode/settings.json")
-    if echo "$settings_file" | grep -q "404"; then
-        echo "❌ Error: Could not find settings.json"
-        rm -rf "$temp_dir"
-        exit 1
-    fi
-    echo "$settings_file" > "$temp_dir/settings.json"
-    
     # Create directories
     mkdir -p .github/ai
-    mkdir -p .vscode
     
-    # Handle commit-message.md - always copy (creates or updates)
-    echo "📄 Installing commit-message.md..."
+    # Install instruction files
+    echo "📄 Installing instruction files..."
     cp -f "$temp_dir/commit-message.md" .github/ai/
-    echo "  ✅ commit-message.md installed"
-    
-    # Handle pr-description.md - always copy (creates or updates)
-    echo "📄 Installing pr-description.md..."
     cp -f "$temp_dir/pr-description.md" .github/ai/
-    echo "  ✅ pr-description.md installed"
+    echo "  ✅ Installed .github/ai/commit-message.md"
+    echo "  ✅ Installed .github/ai/pr-description.md"
     
-    # Handle settings.json
-    echo "📝 Setting up VS Code settings..."
-    if [ -f ".vscode/settings.json" ]; then
-        # Backup before merging
-        BACKUP_DIR="$HOME/.daes"
-        mkdir -p "$BACKUP_DIR"
-        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-        cp -f .vscode/settings.json "$BACKUP_DIR/settings_${TIMESTAMP}.json"
-        
-        echo "  Merging with existing settings.json..."
-        
-        if command -v python3 &> /dev/null; then
-            python3 - "$temp_dir" << 'PYEOF'
-import sys
-import json
-import os
-
-temp_dir = sys.argv[1]
-settings_file = '.vscode/settings.json'
-
-# Load new settings (the ones from GitHub)
-new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
-
-# Load existing settings
-with open(settings_file, 'r') as f:
-    existing = json.load(f)
-
-# Only add keys that don't exist in existing
-for key, value in new_settings.items():
-    if key not in existing:
-        existing[key] = value
-        print(f"  Added: {key}")
-    else:
-        print(f"  Skipped (exists): {key}")
-
-# Write merged result
-with open(settings_file, 'w') as f:
-    json.dump(existing, f, indent=2)
-print("✅ settings.json merged")
-PYEOF
-        else
-            echo "  ⚠️  Python not found, skipping merge"
-        fi
-    else
-        # No existing file, just copy
-        cp -f "$temp_dir/settings.json" .vscode/settings.json
-        echo "  ✅ Created settings.json"
-    fi
+    # Add VS Code settings
+    echo "📝 Configuring VS Code settings..."
+    configure_vscode_settings
     
-    # Cleanup
     rm -rf "$temp_dir"
 }
 
@@ -122,63 +62,77 @@ install_from_local() {
     
     # Create directories
     mkdir -p .github/ai
+    
+    # Install instruction files
+    echo "📄 Installing instruction files..."
+    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
+    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+    echo "  ✅ Installed .github/ai/commit-message.md"
+    echo "  ✅ Installed .github/ai/pr-description.md"
+    
+    # Add VS Code settings
+    echo "📝 Configuring VS Code settings..."
+    configure_vscode_settings
+}
+
+configure_vscode_settings() {
+    # Ensure .vscode directory exists
     mkdir -p .vscode
     
-    # Handle commit-message.md - always copy
-    echo "📄 Installing commit-message.md..."
-    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-    echo "  ✅ commit-message.md installed"
-    
-    # Handle pr-description.md - always copy
-    echo "📄 Installing pr-description.md..."
-    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
-    echo "  ✅ pr-description.md installed"
-    
-    # Handle settings.json
-    echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
-        # Backup before merging
+        # Backup first
         BACKUP_DIR="$HOME/.daes"
         mkdir -p "$BACKUP_DIR"
         TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
         cp -f .vscode/settings.json "$BACKUP_DIR/settings_${TIMESTAMP}.json"
+        echo "  ✅ Backed up settings.json"
         
-        echo "  Merging with existing settings.json..."
-        
+        # Use python to safely add keys
         if command -v python3 &> /dev/null; then
-            python3 - "$script_dir" << 'PYEOF'
-import sys
+            python3 << 'PYEOF'
 import json
-import os
 
-script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 
-# Load new settings
-new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
+# Keys to add
+commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
+commit_value = [{"file": ".github/ai/commit-message.md"}]
 
-# Load existing settings
-with open(settings_file, 'r') as f:
-    existing = json.load(f)
+pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
+pr_value = [{"file": ".github/ai/pr-description.md"}]
 
-# Only add keys that don't exist in existing
-for key, value in new_settings.items():
-    if key not in existing:
-        existing[key] = value
-        print(f"  Added: {key}")
-    else:
-        print(f"  Skipped (exists): {key}")
+# Load existing
+try:
+    with open(settings_file, 'r') as f:
+        settings = json.load(f)
+except:
+    settings = {}
 
-# Write merged result
+# Add keys only if they don't exist
+if commit_key not in settings:
+    settings[commit_key] = commit_value
+    print(f"  ✅ Added: {commit_key}")
+else:
+    print(f"  ⏭️  Skipped (exists): {commit_key}")
+
+if pr_key not in settings:
+    settings[pr_key] = pr_value
+    print(f"  ✅ Added: {pr_key}")
+else:
+    print(f"  ⏭️  Skipped (exists): {pr_key}")
+
+# Write back
 with open(settings_file, 'w') as f:
-    json.dump(existing, f, indent=2)
-print("✅ settings.json merged")
+    json.dump(settings, f, indent=2)
+
+print("✅ VS Code settings configured")
 PYEOF
         else
-            echo "  ⚠️  Python not found, skipping merge"
+            echo "  ⚠️  Python not found, skipping settings"
         fi
     else
-        cp -f "$script_dir/.vscode/settings.json" .vscode/settings.json
+        # No existing file, create new one with just the AI keys
+        echo '{"github.copilot.chat.commitMessageGeneration.instructions": [{"file": ".github/ai/commit-message.md"}], "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [{"file": ".github/ai/pr-description.md"}]}' > .vscode/settings.json
         echo "  ✅ Created settings.json"
     fi
 }
@@ -196,7 +150,7 @@ echo ""
 echo "Your project now has:"
 echo "  - .github/ai/commit-message.md"
 echo "  - .github/ai/pr-description.md"
-echo "  - .vscode/settings.json"
+echo "  - .vscode/settings.json (with AI instructions)"
 echo ""
 echo "Commit messages will now follow Conventional Commits format!"
 echo ""
