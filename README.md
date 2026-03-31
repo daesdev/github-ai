@@ -9,7 +9,7 @@ This repo provides instructions that make GitHub Copilot generate better commit 
 ## Quick Install (One Command)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 ```
 
 Or use the shorter alias (create a redirect if you want):
@@ -29,14 +29,14 @@ Or use the shorter alias (create a redirect if you want):
 ### Method 1: curl | bash (Recommended)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 ```
 
 ### Method 2: Clone and run
 
 ```bash
 # Clone this repository
-git clone https://github.com/darioesp/github-ai.git
+git clone https://github.com/daesdev/github-ai.git
 
 # Navigate to your project
 cd your-project
@@ -114,7 +114,7 @@ Types: feat ✨, fix 🐛, chore 🔧, refactor 🛠️, docs 📝, style 🎨, 
 To update to the latest version, simply run the install command again:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 ```
 
 ## Uninstall
