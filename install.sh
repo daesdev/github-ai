@@ -68,11 +68,14 @@ install_from_github() {
             echo "⚠️  AI settings already present, skipping..."
         else
             if command -v python3 &> /dev/null; then
-                python3 << 'PYEOF'
+                python3 - "$temp_dir" << 'PYEOF'
+import sys
 import json
+import os
 
+temp_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
-new_settings = json.load(open('$temp_dir/settings.json'))
+new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
 
 try:
     existing = json.load(open(settings_file))
@@ -95,7 +98,7 @@ print("✅ Updated settings.json")
 PYEOF
             else
                 echo "⚠️  Python not found, creating new settings.json (backup existing)"
-                cp -f .vscode/settings.json .vscode/settings.json.bak
+                cp -f "$temp_dir/settings.json" .vscode/settings.json.bak
                 cp -f "$temp_dir/settings.json" .vscode/settings.json
                 echo "✅ Created settings.json (backed up old to .bak)"
             fi
@@ -129,11 +132,14 @@ install_from_local() {
             echo "⚠️  AI settings already present, skipping..."
         else
             if command -v python3 &> /dev/null; then
-                python3 << 'PYEOF'
+                python3 - "$script_dir" << 'PYEOF'
+import sys
 import json
+import os
 
+script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
-new_settings = json.load(open('$script_dir/.vscode/settings.json'))
+new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
 
 try:
     existing = json.load(open(settings_file))
