@@ -62,13 +62,21 @@ install_from_github() {
     # Handle settings.json
     echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
-        echo "  Merging with existing settings.json..."
+        echo "  Backing up existing settings.json..."
         
-        if grep -q "github.copilot.chat.commitMessageGeneration.instructions" .vscode/settings.json 2>/dev/null; then
-            echo "⚠️  AI settings already present, skipping..."
-        else
-            if command -v python3 &> /dev/null; then
-                python3 - "$temp_dir" << 'PYEOF'
+        BACKUP_DIR="$HOME/.daes"
+        mkdir -p "$BACKUP_DIR"
+        
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
+        
+        cp -f .vscode/settings.json "$BACKUP_FILE"
+        echo "  ✅ Backup saved to: $BACKUP_FILE"
+        
+        echo "  Adding AI settings to existing configuration..."
+        
+        if command -v python3 &> /dev/null; then
+            python3 - "$temp_dir" << 'PYEOF'
 import sys
 import json
 import os
@@ -77,31 +85,26 @@ temp_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
 
-try:
-    existing = json.load(open(settings_file))
-except:
-    existing = {}
+existing = json.load(open(settings_file))
 
 for key, value in new_settings.items():
     if key not in existing:
         existing[key] = value
     elif isinstance(value, list) and isinstance(existing[key], list):
-        existing[key] = existing[key] + value
+        for item in value:
+            if item not in existing[key]:
+                existing[key].append(item)
     elif isinstance(value, dict) and isinstance(existing[key], dict):
-        existing[key] = {**existing[key], **value}
-    else:
-        existing[key] = value
+        for subkey, subvalue in value.items():
+            if subkey not in existing[key]:
+                existing[key][subkey] = subvalue
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ Updated settings.json")
+print("✅ settings.json updated (existing keys preserved)")
 PYEOF
-            else
-                echo "⚠️  Python not found, creating new settings.json (backup existing)"
-                cp -f "$temp_dir/settings.json" .vscode/settings.json.bak
-                cp -f "$temp_dir/settings.json" .vscode/settings.json
-                echo "✅ Created settings.json (backed up old to .bak)"
-            fi
+        else
+            echo "⚠️  Python not found, skipping settings update"
         fi
     else
         cp -f "$temp_dir/settings.json" .vscode/settings.json
@@ -126,13 +129,21 @@ install_from_local() {
     
     # Handle settings.json
     if [ -f ".vscode/settings.json" ]; then
-        echo "📝 Merging with existing settings.json..."
+        echo "  Backing up existing settings.json..."
         
-        if grep -q "github.copilot.chat.commitMessageGeneration.instructions" .vscode/settings.json 2>/dev/null; then
-            echo "⚠️  AI settings already present, skipping..."
-        else
-            if command -v python3 &> /dev/null; then
-                python3 - "$script_dir" << 'PYEOF'
+        BACKUP_DIR="$HOME/.daes"
+        mkdir -p "$BACKUP_DIR"
+        
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
+        
+        cp -f .vscode/settings.json "$BACKUP_FILE"
+        echo "  ✅ Backup saved to: $BACKUP_FILE"
+        
+        echo "  Adding AI settings to existing configuration..."
+        
+        if command -v python3 &> /dev/null; then
+            python3 - "$script_dir" << 'PYEOF'
 import sys
 import json
 import os
@@ -141,29 +152,27 @@ script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
 
-try:
-    existing = json.load(open(settings_file))
-except:
-    existing = {}
+existing = json.load(open(settings_file))
 
 for key, value in new_settings.items():
     if key not in existing:
         existing[key] = value
     elif isinstance(value, list) and isinstance(existing[key], list):
-        existing[key] = existing[key] + value
+        for item in value:
+            if item not in existing[key]:
+                existing[key].append(item)
     elif isinstance(value, dict) and isinstance(existing[key], dict):
-        existing[key] = {**existing[key], **value}
-    else:
-        existing[key] = value
+        for subkey, subvalue in value.items():
+            if subkey not in existing[key]:
+                existing[key][subkey] = subvalue
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ Updated settings.json")
+print("✅ settings.json updated (existing keys preserved)")
 PYEOF
             else
                 echo "⚠️  Python not found, skipping settings merge"
             fi
-        fi
     else
         cp -f "$script_dir/.vscode/settings.json" .vscode/settings.json
         echo "✅ Created settings.json"
