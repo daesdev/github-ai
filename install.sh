@@ -54,27 +54,30 @@ install_from_github() {
     mkdir -p .github/ai
     mkdir -p .vscode
     
-    # Copy instruction files
-    echo "📄 Installing instruction files..."
-    cp -f "$temp_dir/commit-message.md" .github/ai/
-    cp -f "$temp_dir/pr-description.md" .github/ai/
+    # Handle commit-message.md
+    echo "📄 Installing commit-message.md..."
+    if [ -f ".github/ai/commit-message.md" ]; then
+        cp -f "$temp_dir/commit-message.md" .github/ai/
+        echo "  ✅ Updated commit-message.md"
+    else
+        cp -f "$temp_dir/commit-message.md" .github/ai/
+        echo "  ✅ Created commit-message.md"
+    fi
+    
+    # Handle pr-description.md
+    echo "📄 Installing pr-description.md..."
+    if [ -f ".github/ai/pr-description.md" ]; then
+        cp -f "$temp_dir/pr-description.md" .github/ai/
+        echo "  ✅ Updated pr-description.md"
+    else
+        cp -f "$temp_dir/pr-description.md" .github/ai/
+        echo "  ✅ Created pr-description.md"
+    fi
     
     # Handle settings.json
     echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
-        echo "  Backing up existing settings.json..."
-        
-        BACKUP_DIR="$HOME/.daes"
-        mkdir -p "$BACKUP_DIR"
-        
-        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-        BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
-        
-        cp -f .vscode/settings.json "$BACKUP_FILE"
-        cp -f .vscode/settings.json "$BACKUP_DIR/settings_latest.json"
-        echo "  ✅ Backup saved to: $BACKUP_FILE"
-        
-        echo "  Adding AI settings to existing configuration..."
+        echo "  Merging with existing settings.json..."
         
         if command -v python3 &> /dev/null; then
             python3 - "$temp_dir" << 'PYEOF'
@@ -85,32 +88,12 @@ import os
 temp_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 
-try:
-    new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
-except Exception as e:
-    print(f"❌ Error: Cannot read new settings.json: {e}")
-    sys.exit(1)
+new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
 
 try:
     with open(settings_file, 'r') as f:
         existing = json.load(f)
-except json.JSONDecodeError as e:
-    print(f"⚠️  Existing settings.json is malformed: {e}")
-    backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
-    if os.path.exists(backup_file):
-        print("   Trying to restore from backup...")
-        try:
-            with open(backup_file, 'r') as f:
-                existing = json.load(f)
-            print("✅ Restored from backup")
-        except:
-            print("⚠️  Backup also malformed, creating fresh settings...")
-            existing = {}
-    else:
-        print("   Creating fresh settings file...")
-        existing = {}
-except Exception as e:
-    print(f"⚠️  Cannot read existing settings.json: {e}")
+except:
     existing = {}
 
 for key, value in new_settings.items():
@@ -127,14 +110,14 @@ for key, value in new_settings.items():
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ settings.json updated (existing keys preserved)")
+print("✅ settings.json updated")
 PYEOF
         else
-            echo "⚠️  Python not found, skipping settings update"
+            echo "  ⚠️  Python not found, skipping merge"
         fi
     else
         cp -f "$temp_dir/settings.json" .vscode/settings.json
-        echo "✅ Created settings.json"
+        echo "  ✅ Created settings.json"
     fi
     
     # Cleanup
@@ -148,26 +131,30 @@ install_from_local() {
     mkdir -p .github/ai
     mkdir -p .vscode
     
-    # Copy files
-    echo "📄 Installing from local..."
-    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+    # Handle commit-message.md
+    echo "📄 Installing commit-message.md..."
+    if [ -f ".github/ai/commit-message.md" ]; then
+        cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
+        echo "  ✅ Updated commit-message.md"
+    else
+        cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
+        echo "  ✅ Created commit-message.md"
+    fi
+    
+    # Handle pr-description.md
+    echo "📄 Installing pr-description.md..."
+    if [ -f ".github/ai/pr-description.md" ]; then
+        cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+        echo "  ✅ Updated pr-description.md"
+    else
+        cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+        echo "  ✅ Created pr-description.md"
+    fi
     
     # Handle settings.json
+    echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
-        echo "  Backing up existing settings.json..."
-        
-        BACKUP_DIR="$HOME/.daes"
-        mkdir -p "$BACKUP_DIR"
-        
-        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-        BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
-        
-        cp -f .vscode/settings.json "$BACKUP_FILE"
-        cp -f .vscode/settings.json "$BACKUP_DIR/settings_latest.json"
-        echo "  ✅ Backup saved to: $BACKUP_FILE"
-        
-        echo "  Adding AI settings to existing configuration..."
+        echo "  Merging with existing settings.json..."
         
         if command -v python3 &> /dev/null; then
             python3 - "$script_dir" << 'PYEOF'
@@ -178,32 +165,12 @@ import os
 script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 
-try:
-    new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
-except Exception as e:
-    print(f"❌ Error: Cannot read new settings.json: {e}")
-    sys.exit(1)
+new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
 
 try:
     with open(settings_file, 'r') as f:
         existing = json.load(f)
-except json.JSONDecodeError as e:
-    print(f"⚠️  Existing settings.json is malformed: {e}")
-    backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
-    if os.path.exists(backup_file):
-        print("   Trying to restore from backup...")
-        try:
-            with open(backup_file, 'r') as f:
-                existing = json.load(f)
-            print("✅ Restored from backup")
-        except:
-            print("⚠️  Backup also malformed, creating fresh settings...")
-            existing = {}
-    else:
-        print("   Creating fresh settings file...")
-        existing = {}
-except Exception as e:
-    print(f"⚠️  Cannot read existing settings.json: {e}")
+except:
     existing = {}
 
 for key, value in new_settings.items():
@@ -220,14 +187,14 @@ for key, value in new_settings.items():
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ settings.json updated (existing keys preserved)")
+print("✅ settings.json updated")
 PYEOF
-            else
-                echo "⚠️  Python not found, skipping settings merge"
-            fi
+        else
+            echo "  ⚠️  Python not found, skipping merge"
+        fi
     else
         cp -f "$script_dir/.vscode/settings.json" .vscode/settings.json
-        echo "✅ Created settings.json"
+        echo "  ✅ Created settings.json"
     fi
 }
 
