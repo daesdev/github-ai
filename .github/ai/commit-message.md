@@ -1,10 +1,3 @@
-  Downloading commit-message.md...
----
-name: 'Conventional Commit Messages'
-description: 'Generate commit messages using Conventional Commits format with emoji'
-applyTo: '**'
----
-
 # GitHub Copilot Commit Message Instructions
 
 Generate a single commit message for all staged changes using this format:
@@ -37,6 +30,7 @@ Generate a single commit message for all staged changes using this format:
 ## Edge Cases
 
 If there are unrelated changes, use a single title and add at the end:
+
 ```
 NOTE: staged changes include unrelated work; consider splitting commits.
 ```

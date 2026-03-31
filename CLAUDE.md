@@ -16,14 +16,19 @@ This repository provides installation scripts and configuration files to help de
 
 ```
 github-ai/
-├── .github/ai/
-│   ├── commit-message.md      # AI instructions for commit messages
-│   └── pr-description.md      # AI instructions for PR descriptions
-├── .vscode/settings.json      # VS Code Copilot configuration
-├── install.sh                 # Installation script (works standalone)
-├── Makefile                   # Make commands
-├── README.md                  # Usage documentation
-└── CLAUDE.md                  # This file
+├── .github/
+│   ├── ai/
+│   │   ├── commit-message.md      # AI instructions for commit messages
+│   │   └── pr-description.md      # AI instructions for PR descriptions
+│   └── workflows/
+│       └── update-website.yml     # Auto-update version badge on release
+├── .vscode/settings.json           # VS Code Copilot configuration
+├── web/index.html                  # Landing page with version badge
+├── wrangler.jsonc                  # Cloudflare Pages deployment config
+├── install.sh                      # Installation script (works standalone)
+├── Makefile                        # Make commands
+├── README.md                       # Usage documentation
+└── CLAUDE.md                       # This file
 ```
 
 ## Key Features
@@ -51,6 +56,8 @@ github-ai/
 - Creates local `.bak` file for safety
 - Merges settings.json preserving existing keys
 - Restores from backup if something fails
+- Fetches latest version from GitHub API (`get_latest_version()`)
+- Shows version at end of installation
 
 ## Key Technologies
 
@@ -59,6 +66,30 @@ github-ai/
 - Make
 - JSON (settings.json)
 - Markdown (instructions files)
+- Wrangler (Cloudflare Pages deployment)
+- GitHub Actions (auto-update version on release)
+
+## Deployment
+
+### Cloudflare Pages
+The project uses Cloudflare Pages for hosting the landing page at `vscode.daes.dev`.
+
+**Wrangler config** (`wrangler.jsonc`):
+- Project name: `github-ai`
+- Environment: production
+- Custom domain: `vscode.daes.dev`
+
+**Deploy commands**:
+```bash
+# Install wrangler if needed
+npm install -g wrangler
+
+# Deploy to Cloudflare Pages
+wrangler pages deploy web --project-name=github-ai
+```
+
+### GitHub Actions
+- `update-website.yml`: Auto-updates version badge in `web/index.html` on release
 
 ## VS Code Settings Keys
 
@@ -84,7 +115,7 @@ Both use the format: `[{"file": ".github/ai/commit-message.md"}]`
 
 1. Add file to `.github/ai/`
 2. Update `install.sh` to copy the new file
-3. Update `_write_vscode_settings_merge()` with new instruction key
+3. Update `configure_vscode_settings()` with new instruction key
 4. Update README.md with usage example
 
 ### Testing installation
@@ -102,10 +133,24 @@ cat .vscode/settings.json
 
 Backups are stored in `~/.daes/` with timestamp format: `settings_YYYYMMDD_HHMMSS.json`
 
+## Backup & Safety Functions
+
+The installer provides these functions for safe modifications:
+
+- `backup_settings()` - Creates backup in `~/.daes/` with timestamp
+- `restore_settings()` - Restores from latest backup if something fails
+- `configure_vscode_settings()` - Main function that handles all VS Code settings
+
+All modifications to `settings.json`:
+1. Create backup in `~/.daes/settings_YYYYMMDD_HHMMSS.json`
+2. Create local `.bak` file
+3. Only add keys if they don't exist (merge, not replace)
+4. Restore from backup if Python script fails
+
 ## Edge Cases Handled
 
 - Settings already present → merges, preserves existing keys
-- Python3 not available → skips settings configuration
+- Python3 not available → exits with error
 - Invalid JSON in settings.json → uses backup or starts fresh
 - Network failure during curl → shows error and exits
 - Missing source files (local mode) → exits with error

@@ -21,6 +21,24 @@ is_pipe() {
     [ ! -t 0 ]
 }
 
+get_latest_version() {
+    local version
+    version=$(curl -sL --fail "https://api.github.com/repos/daesdev/github-ai/tags" 2>/dev/null | grep -o '"name": "[^"]*"' | head -1 | cut -d'"' -f4)
+    if [ -n "$version" ]; then
+        echo "$version"
+    else
+        echo "latest"
+    fi
+}
+
+get_install_version() {
+    if [ -n "$GITHUB_AI_VERSION" ]; then
+        echo "$GITHUB_AI_VERSION"
+    else
+        get_latest_version
+    fi
+}
+
 backup_settings() {
     if [ -f ".vscode/settings.json" ]; then
         BACKUP_DIR="$HOME/.daes"
@@ -118,16 +136,16 @@ PYEOF
 download_file() {
     local url="$1"
     local label="$2"
-    local content
     
-    echo "  Downloading ${label}..."
+    echo "  Downloading ${label}..." >&2
+    local content
     content=$(curl -sL --fail "$url") || {
-        echo "  ❌ Error: Could not download ${label}"
+        echo "  ❌ Error: Could not download ${label}" >&2
         exit 1
     }
     
     if echo "$content" | grep -q "404"; then
-        echo "  ❌ Error: ${label} not found"
+        echo "  ❌ Error: ${label} not found" >&2
         exit 1
     fi
     
@@ -205,6 +223,8 @@ echo ""
 echo "📦 Backup location: $HOME/.daes/settings_*.json"
 echo ""
 echo "Commit messages will now follow Conventional Commits format!"
+echo ""
+echo "Version: $(get_install_version)"
 echo ""
 echo "To update in the future, run:"
 echo "  curl -sL $BASE_URL/install.sh | bash"

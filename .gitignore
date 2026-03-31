@@ -1,0 +1,10 @@
+# Wrangler
+.wrangler/cache
+
+# Entornos
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
