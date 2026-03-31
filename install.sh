@@ -145,9 +145,30 @@ PYEOF
             echo "  ⚠️  Python not found, skipping settings"
         fi
     else
-        # No existing file, create new one with just the AI keys
-        echo '{"github.copilot.chat.commitMessageGeneration.instructions": [{"file": ".github/ai/commit-message.md"}], "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [{"file": ".github/ai/pr-description.md"}]}' > .vscode/settings.json
-        echo "  ✅ Created settings.json"
+        # No existing file, create new one using Python
+        if command -v python3 &> /dev/null; then
+            python3 << 'PYEOF'
+import json
+
+settings_file = '.vscode/settings.json'
+
+settings = {
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {"file": ".github/ai/commit-message.md"}
+    ],
+    "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+        {"file": ".github/ai/pr-description.md"}
+    ]
+}
+
+with open(settings_file, 'w') as f:
+    json.dump(settings, f, indent=2)
+
+print("✅ Created settings.json")
+PYEOF
+        else
+            echo "  ⚠️  Python not found, skipping settings"
+        fi
     fi
 }
 
