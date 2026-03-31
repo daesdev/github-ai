@@ -55,6 +55,8 @@ github-ai/
 - Creates local `.bak` file for safety
 - Merges settings.json preserving existing keys
 - Restores from backup if something fails
+- Fetches latest version from GitHub API (`get_latest_version()`)
+- Shows version at end of installation
 
 ## Key Technologies
 
