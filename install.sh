@@ -91,8 +91,10 @@ configure_vscode_settings() {
         if command -v python3 &> /dev/null; then
             python3 << 'PYEOF'
 import json
+import os
 
 settings_file = '.vscode/settings.json'
+backup_file = settings_file + '.bak'
 
 # Keys to add
 commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
@@ -101,11 +103,23 @@ commit_value = [{"file": ".github/ai/commit-message.md"}]
 pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
 pr_value = [{"file": ".github/ai/pr-description.md"}]
 
+# Create backup before modifying
+if os.path.exists(settings_file):
+    with open(settings_file, 'r') as f:
+        original_content = f.read()
+    with open(backup_file, 'w') as f:
+        f.write(original_content)
+
 # Load existing
 try:
     with open(settings_file, 'r') as f:
         settings = json.load(f)
-except:
+except json.JSONDecodeError as e:
+    print(f"  ⚠️  Invalid JSON in settings.json, using backup")
+    with open(backup_file, 'r') as f:
+        settings = json.load(f)
+except Exception as e:
+    print(f"  ⚠️  Error reading settings.json: {e}")
     settings = {}
 
 # Add keys only if they don't exist
