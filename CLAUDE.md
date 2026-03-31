@@ -84,7 +84,7 @@ Both use the format: `[{"file": ".github/ai/commit-message.md"}]`
 
 1. Add file to `.github/ai/`
 2. Update `install.sh` to copy the new file
-3. Update `_write_vscode_settings_merge()` with new instruction key
+3. Update `configure_vscode_settings()` with new instruction key
 4. Update README.md with usage example
 
 ### Testing installation
@@ -102,10 +102,24 @@ cat .vscode/settings.json
 
 Backups are stored in `~/.daes/` with timestamp format: `settings_YYYYMMDD_HHMMSS.json`
 
+## Backup & Safety Functions
+
+The installer provides these functions for safe modifications:
+
+- `backup_settings()` - Creates backup in `~/.daes/` with timestamp
+- `restore_settings()` - Restores from latest backup if something fails
+- `configure_vscode_settings()` - Main function that handles all VS Code settings
+
+All modifications to `settings.json`:
+1. Create backup in `~/.daes/settings_YYYYMMDD_HHMMSS.json`
+2. Create local `.bak` file
+3. Only add keys if they don't exist (merge, not replace)
+4. Restore from backup if Python script fails
+
 ## Edge Cases Handled
 
 - Settings already present → merges, preserves existing keys
-- Python3 not available → skips settings configuration
+- Python3 not available → exits with error
 - Invalid JSON in settings.json → uses backup or starts fresh
 - Network failure during curl → shows error and exits
 - Missing source files (local mode) → exits with error
