@@ -159,8 +159,8 @@ All modifications to `settings.json`:
 ## Release Process
 
 ### Version Format
-`v[year-short].[month-number].[day-number][hours-format24]`
-- Example: `v26.03.31.13` (year: 2026, month: 03, day: 31, hour: 13)
+`v[year-short][month-number][day-number+hours-format24+minutes]`
+- Example: `v26.03.311321` (year: 2026, month: 03, day: 31, hour: 13, minutes: 21)
 
 ### Steps to Create Release
 
@@ -173,7 +173,7 @@ git push origin --delete <tag1> <tag2>...  # Delete remote tags
 
 2. **Generate new version**:
 ```bash
-date +"v%y.%m.%d.%H"               # Generate version format
+date +"v%y.%m.%d%H%M"               # Generate version format (dayhoursminutes)
 ```
 
 3. **Create release using git flow**:
@@ -196,5 +196,6 @@ gh release create <version> --title "<version>" --notes "<description>"
 ### Important Notes
 - Always use git flow for releases
 - Delete old tags before creating new ones
-- Format: vYY.MM.DD.HH (24-hour format for hours)
+- Format: vYY.MMDDHHMM (day + hours + minutes in 24h format)
+- Requires `workflow` scope in gh auth to create GitHub releases
 - Requires `workflow` scope in gh auth to create GitHub releases
