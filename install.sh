@@ -96,16 +96,19 @@ try:
         existing = json.load(f)
 except json.JSONDecodeError as e:
     print(f"⚠️  Existing settings.json is malformed: {e}")
-    print("   Restoring from backup and creating new file...")
-    
     backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
     if os.path.exists(backup_file):
-        os.replace(backup_file, settings_file)
-        with open(settings_file, 'r') as f:
-            existing = json.load(f)
+        print("   Trying to restore from backup...")
+        try:
+            with open(backup_file, 'r') as f:
+                existing = json.load(f)
+            print("✅ Restored from backup")
+        except:
+            print("⚠️  Backup also malformed, creating fresh settings...")
+            existing = {}
     else:
-        print("❌ No backup found, skipping settings update")
-        sys.exit(1)
+        print("   Creating fresh settings file...")
+        existing = {}
 except Exception as e:
     print(f"⚠️  Cannot read existing settings.json: {e}")
     existing = {}
@@ -186,16 +189,19 @@ try:
         existing = json.load(f)
 except json.JSONDecodeError as e:
     print(f"⚠️  Existing settings.json is malformed: {e}")
-    print("   Restoring from backup and creating new file...")
-    
     backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
     if os.path.exists(backup_file):
-        os.replace(backup_file, settings_file)
-        with open(settings_file, 'r') as f:
-            existing = json.load(f)
+        print("   Trying to restore from backup...")
+        try:
+            with open(backup_file, 'r') as f:
+                existing = json.load(f)
+            print("✅ Restored from backup")
+        except:
+            print("⚠️  Backup also malformed, creating fresh settings...")
+            existing = {}
     else:
-        print("❌ No backup found, skipping settings update")
-        sys.exit(1)
+        print("   Creating fresh settings file...")
+        existing = {}
 except Exception as e:
     print(f"⚠️  Cannot read existing settings.json: {e}")
     existing = {}
