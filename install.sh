@@ -71,6 +71,7 @@ install_from_github() {
         BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
         
         cp -f .vscode/settings.json "$BACKUP_FILE"
+        cp -f .vscode/settings.json "$BACKUP_DIR/settings_latest.json"
         echo "  ✅ Backup saved to: $BACKUP_FILE"
         
         echo "  Adding AI settings to existing configuration..."
@@ -83,9 +84,31 @@ import os
 
 temp_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
-new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
 
-existing = json.load(open(settings_file))
+try:
+    new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
+except Exception as e:
+    print(f"❌ Error: Cannot read new settings.json: {e}")
+    sys.exit(1)
+
+try:
+    with open(settings_file, 'r') as f:
+        existing = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"⚠️  Existing settings.json is malformed: {e}")
+    print("   Restoring from backup and creating new file...")
+    
+    backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
+    if os.path.exists(backup_file):
+        os.replace(backup_file, settings_file)
+        with open(settings_file, 'r') as f:
+            existing = json.load(f)
+    else:
+        print("❌ No backup found, skipping settings update")
+        sys.exit(1)
+except Exception as e:
+    print(f"⚠️  Cannot read existing settings.json: {e}")
+    existing = {}
 
 for key, value in new_settings.items():
     if key not in existing:
@@ -138,6 +161,7 @@ install_from_local() {
         BACKUP_FILE="$BACKUP_DIR/settings_${TIMESTAMP}.json"
         
         cp -f .vscode/settings.json "$BACKUP_FILE"
+        cp -f .vscode/settings.json "$BACKUP_DIR/settings_latest.json"
         echo "  ✅ Backup saved to: $BACKUP_FILE"
         
         echo "  Adding AI settings to existing configuration..."
@@ -150,9 +174,31 @@ import os
 
 script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
-new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
 
-existing = json.load(open(settings_file))
+try:
+    new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
+except Exception as e:
+    print(f"❌ Error: Cannot read new settings.json: {e}")
+    sys.exit(1)
+
+try:
+    with open(settings_file, 'r') as f:
+        existing = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"⚠️  Existing settings.json is malformed: {e}")
+    print("   Restoring from backup and creating new file...")
+    
+    backup_file = os.path.join(os.path.expanduser('~'), '.daes', 'settings_latest.json')
+    if os.path.exists(backup_file):
+        os.replace(backup_file, settings_file)
+        with open(settings_file, 'r') as f:
+            existing = json.load(f)
+    else:
+        print("❌ No backup found, skipping settings update")
+        sys.exit(1)
+except Exception as e:
+    print(f"⚠️  Cannot read existing settings.json: {e}")
+    existing = {}
 
 for key, value in new_settings.items():
     if key not in existing:
