@@ -18,6 +18,8 @@ curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | b
 - **AI-Powered PR Descriptions**: Intelligent PR title and description generation with structured templates
 - **Conventional Commits**: Standardized commit message format with type, scope, emoji, and subject
 - **One-command install**: Works on any project with a single curl command
+- **Safe & Secure**: Backup to `~/.daes/` before any modification, restores on failure
+- **Version Tracking**: Shows current version during installation, auto-updates landing page on release
 
 ## Installation Methods
 
@@ -76,9 +78,21 @@ The settings point Copilot to the instruction files in `.github/ai/`.
 
 Before modifying `.vscode/settings.json`, the installer:
 1. Creates a backup in `~/.daes/` with timestamp
-2. Creates a local `.bak` file
-3. Only adds new keys if they don't exist (preserves existing settings)
-4. Restores from backup if something fails
+2. Only adds new keys if they don't exist (preserves existing settings)
+3. Restores from backup if something fails
+
+## Landing Page
+
+The project includes a landing page at `web/index.html` that displays:
+- Installation command
+- Features overview
+- Version badge (auto-updates on release via GitHub Actions)
+
+To view the landing page locally:
+```bash
+# Serve the web directory
+cd web && python3 -m http.server 8000
+```
 
 ## Requirements
 
