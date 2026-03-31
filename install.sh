@@ -79,10 +79,10 @@ settings_file = '.vscode/settings.json'
 backup_file = settings_file + '.bak'
 
 commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
-commit_value = [{"file": ".github/ai/commit-message.md"}]
+commit_value = [{"file": ".github/copilot-instructions.md"}]
 
 pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
-pr_value = [{"file": ".github/ai/pr-description.md"}]
+pr_value = [{"file": ".github/copilot-instructions.md"}]
 
 settings = {}
 if os.path.exists(settings_file):
@@ -157,23 +157,16 @@ install_from_github() {
     
     echo "📥 Downloading files from GitHub..."
     
-    local commit_file
-    commit_file=$(download_file "$BASE_URL/.github/ai/commit-message.md" "commit-message.md")
-    echo "$commit_file" > "$TEMP_DIR/commit-message.md"
-    echo "  ✅ Downloaded commit-message.md"
+    local instructions_file
+    instructions_file=$(download_file "$BASE_URL/.github/copilot-instructions.md" "copilot-instructions.md")
+    echo "$instructions_file" > "$TEMP_DIR/copilot-instructions.md"
+    echo "  ✅ Downloaded copilot-instructions.md"
     
-    local pr_file
-    pr_file=$(download_file "$BASE_URL/.github/ai/pr-description.md" "pr-description.md")
-    echo "$pr_file" > "$TEMP_DIR/pr-description.md"
-    echo "  ✅ Downloaded pr-description.md"
-    
-    mkdir -p .github/ai
+    mkdir -p .github
     
     echo "📄 Installing instruction files..."
-    cp -f "$TEMP_DIR/commit-message.md" .github/ai/
-    cp -f "$TEMP_DIR/pr-description.md" .github/ai/
-    echo "  ✅ Installed .github/ai/commit-message.md"
-    echo "  ✅ Installed .github/ai/pr-description.md"
+    cp -f "$TEMP_DIR/copilot-instructions.md" .github/
+    echo "  ✅ Installed .github/copilot-instructions.md"
     
     echo "📝 Configuring VS Code settings..."
     configure_vscode_settings
@@ -187,20 +180,16 @@ install_from_local() {
         script_dir="$(cd "$(dirname "$0")" && pwd)"
     fi
     
-    for f in ".github/ai/commit-message.md" ".github/ai/pr-description.md"; do
-        if [ ! -f "$script_dir/$f" ]; then
-            echo "❌ Missing source file: $script_dir/$f"
-            exit 1
-        fi
-    done
+    if [ ! -f "$script_dir/.github/copilot-instructions.md" ]; then
+        echo "❌ Missing source file: $script_dir/.github/copilot-instructions.md"
+        exit 1
+    fi
     
-    mkdir -p .github/ai
+    mkdir -p .github
     
     echo "📄 Installing instruction files..."
-    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
-    echo "  ✅ Installed .github/ai/commit-message.md"
-    echo "  ✅ Installed .github/ai/pr-description.md"
+    cp -f "$script_dir/.github/copilot-instructions.md" .github/
+    echo "  ✅ Installed .github/copilot-instructions.md"
     
     echo "📝 Configuring VS Code settings..."
     configure_vscode_settings
@@ -216,8 +205,7 @@ echo ""
 echo "✅ Installation complete!"
 echo ""
 echo "Your project now has:"
-echo "  - .github/ai/commit-message.md"
-echo "  - .github/ai/pr-description.md"
+echo "  - .github/copilot-instructions.md"
 echo "  - .vscode/settings.json (with Copilot AI instructions)"
 echo ""
 echo "📦 Backup location: $HOME/.daes/settings_*.json"
