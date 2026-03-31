@@ -44,9 +44,8 @@ make install
 The installer creates these files in your project:
 
 ```
-.github/ai/
-├── commit-message.md    # Commit message AI instructions
-└── pr-description.md    # PR description AI instructions
+.github/
+└── copilot-instructions.md    # AI instructions for commits and PRs
 ```
 
 And adds this to `.vscode/settings.json`:
@@ -55,18 +54,24 @@ And adds this to `.vscode/settings.json`:
 {
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "file": ".github/ai/commit-message.md"
+      "file": ".github/copilot-instructions.md"
     }
   ],
   "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
     {
-      "file": ".github/ai/pr-description.md"
+      "file": ".github/copilot-instructions.md"
     }
   ]
 }
 ```
 
 ## How It Works
+
+GitHub Copilot uses the instruction file to generate:
+- **Commit Messages**: AI-generated messages following Conventional Commits format
+- **PR Descriptions**: AI-generated titles and descriptions with structured templates
+
+The settings point Copilot to `.github/copilot-instructions.md`.
 
 GitHub Copilot uses the instruction files to generate:
 - **Commit Messages**: AI-generated messages following Conventional Commits format

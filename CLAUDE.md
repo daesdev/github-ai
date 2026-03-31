@@ -17,11 +17,9 @@ This repository provides installation scripts and configuration files to help de
 ```
 github-ai/
 ├── .github/
-│   ├── ai/
-│   │   ├── commit-message.md      # AI instructions for commit messages
-│   │   └── pr-description.md      # AI instructions for PR descriptions
+│   ├── copilot-instructions.md     # AI instructions for commits and PRs
 │   └── workflows/
-│       └── update-website.yml     # Auto-update version badge on release
+│       └── update-website.yml      # Auto-update version badge on release
 ├── .vscode/settings.json           # VS Code Copilot configuration
 ├── web/index.html                  # Landing page with version badge
 ├── wrangler.jsonc                  # Cloudflare Pages deployment config
