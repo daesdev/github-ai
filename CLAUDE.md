@@ -24,7 +24,7 @@ github-ai/
 │       └── update-website.yml     # Auto-update version badge on release
 ├── .vscode/settings.json           # VS Code Copilot configuration
 ├── web/index.html                  # Landing page with version badge
-├── wrangler.toml                   # Cloudflare Pages deployment config
+├── wrangler.jsonc                  # Cloudflare Pages deployment config
 ├── install.sh                      # Installation script (works standalone)
 ├── Makefile                        # Make commands
 ├── README.md                       # Usage documentation
@@ -74,7 +74,7 @@ github-ai/
 ### Cloudflare Pages
 The project uses Cloudflare Pages for hosting the landing page at `vscode.daes.dev`.
 
-**Wrangler config** (`wrangler.toml`):
+**Wrangler config** (`wrangler.jsonc`):
 - Project name: `github-ai`
 - Environment: production
 - Custom domain: `vscode.daes.dev`
