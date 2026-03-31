@@ -16,14 +16,18 @@ This repository provides installation scripts and configuration files to help de
 
 ```
 github-ai/
-├── .github/ai/
-│   ├── commit-message.md      # AI instructions for commit messages
-│   └── pr-description.md      # AI instructions for PR descriptions
-├── .vscode/settings.json      # VS Code Copilot configuration
-├── install.sh                 # Installation script (works standalone)
-├── Makefile                   # Make commands
-├── README.md                  # Usage documentation
-└── CLAUDE.md                  # This file
+├── .github/
+│   ├── ai/
+│   │   ├── commit-message.md      # AI instructions for commit messages
+│   │   └── pr-description.md      # AI instructions for PR descriptions
+│   └── workflows/
+│       └── update-website.yml     # Auto-update version badge on release
+├── .vscode/settings.json           # VS Code Copilot configuration
+├── web/index.html                  # Landing page with version badge
+├── install.sh                      # Installation script (works standalone)
+├── Makefile                        # Make commands
+├── README.md                       # Usage documentation
+└── CLAUDE.md                       # This file
 ```
 
 ## Key Features
