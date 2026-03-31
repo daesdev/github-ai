@@ -1,0 +1,30 @@
+name: Update Website on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-website:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update version in index.html
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          echo "Updating to version: $VERSION"
+          
+          # Read the file
+          sed -i "s/loading.../$VERSION/g" web/index.html
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add web/index.html
+          git diff --staged --quiet || git commit -m "chore: 🔧 Update version badge for release $VERSION"
+          git push
