@@ -24,7 +24,7 @@ install_from_github() {
     echo "  Downloading commit-message.md..."
     local commit_file=$(curl -sL "$BASE_URL/.github/ai/commit-message.md")
     if echo "$commit_file" | grep -q "404"; then
-        echo "❌ Error: Could not find commit-message.md at $BASE_URL/.github/ai/commit-message.md"
+        echo "❌ Error: Could not find commit-message.md"
         rm -rf "$temp_dir"
         exit 1
     fi
@@ -54,29 +54,25 @@ install_from_github() {
     mkdir -p .github/ai
     mkdir -p .vscode
     
-    # Handle commit-message.md
+    # Handle commit-message.md - always copy (creates or updates)
     echo "📄 Installing commit-message.md..."
-    if [ -f ".github/ai/commit-message.md" ]; then
-        cp -f "$temp_dir/commit-message.md" .github/ai/
-        echo "  ✅ Updated commit-message.md"
-    else
-        cp -f "$temp_dir/commit-message.md" .github/ai/
-        echo "  ✅ Created commit-message.md"
-    fi
+    cp -f "$temp_dir/commit-message.md" .github/ai/
+    echo "  ✅ commit-message.md installed"
     
-    # Handle pr-description.md
+    # Handle pr-description.md - always copy (creates or updates)
     echo "📄 Installing pr-description.md..."
-    if [ -f ".github/ai/pr-description.md" ]; then
-        cp -f "$temp_dir/pr-description.md" .github/ai/
-        echo "  ✅ Updated pr-description.md"
-    else
-        cp -f "$temp_dir/pr-description.md" .github/ai/
-        echo "  ✅ Created pr-description.md"
-    fi
+    cp -f "$temp_dir/pr-description.md" .github/ai/
+    echo "  ✅ pr-description.md installed"
     
     # Handle settings.json
     echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
+        # Backup before merging
+        BACKUP_DIR="$HOME/.daes"
+        mkdir -p "$BACKUP_DIR"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        cp -f .vscode/settings.json "$BACKUP_DIR/settings_${TIMESTAMP}.json"
+        
         echo "  Merging with existing settings.json..."
         
         if command -v python3 &> /dev/null; then
@@ -88,34 +84,31 @@ import os
 temp_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 
+# Load new settings (the ones from GitHub)
 new_settings = json.load(open(os.path.join(temp_dir, 'settings.json')))
 
-try:
-    with open(settings_file, 'r') as f:
-        existing = json.load(f)
-except:
-    existing = {}
+# Load existing settings
+with open(settings_file, 'r') as f:
+    existing = json.load(f)
 
+# Only add keys that don't exist in existing
 for key, value in new_settings.items():
     if key not in existing:
         existing[key] = value
-    elif isinstance(value, list) and isinstance(existing[key], list):
-        for item in value:
-            if item not in existing[key]:
-                existing[key].append(item)
-    elif isinstance(value, dict) and isinstance(existing[key], dict):
-        for subkey, subvalue in value.items():
-            if subkey not in existing[key]:
-                existing[key][subkey] = subvalue
+        print(f"  Added: {key}")
+    else:
+        print(f"  Skipped (exists): {key}")
 
+# Write merged result
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ settings.json updated")
+print("✅ settings.json merged")
 PYEOF
         else
             echo "  ⚠️  Python not found, skipping merge"
         fi
     else
+        # No existing file, just copy
         cp -f "$temp_dir/settings.json" .vscode/settings.json
         echo "  ✅ Created settings.json"
     fi
@@ -131,29 +124,25 @@ install_from_local() {
     mkdir -p .github/ai
     mkdir -p .vscode
     
-    # Handle commit-message.md
+    # Handle commit-message.md - always copy
     echo "📄 Installing commit-message.md..."
-    if [ -f ".github/ai/commit-message.md" ]; then
-        cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-        echo "  ✅ Updated commit-message.md"
-    else
-        cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-        echo "  ✅ Created commit-message.md"
-    fi
+    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
+    echo "  ✅ commit-message.md installed"
     
-    # Handle pr-description.md
+    # Handle pr-description.md - always copy
     echo "📄 Installing pr-description.md..."
-    if [ -f ".github/ai/pr-description.md" ]; then
-        cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
-        echo "  ✅ Updated pr-description.md"
-    else
-        cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
-        echo "  ✅ Created pr-description.md"
-    fi
+    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+    echo "  ✅ pr-description.md installed"
     
     # Handle settings.json
     echo "📝 Setting up VS Code settings..."
     if [ -f ".vscode/settings.json" ]; then
+        # Backup before merging
+        BACKUP_DIR="$HOME/.daes"
+        mkdir -p "$BACKUP_DIR"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        cp -f .vscode/settings.json "$BACKUP_DIR/settings_${TIMESTAMP}.json"
+        
         echo "  Merging with existing settings.json..."
         
         if command -v python3 &> /dev/null; then
@@ -165,29 +154,25 @@ import os
 script_dir = sys.argv[1]
 settings_file = '.vscode/settings.json'
 
+# Load new settings
 new_settings = json.load(open(os.path.join(script_dir, '.vscode/settings.json')))
 
-try:
-    with open(settings_file, 'r') as f:
-        existing = json.load(f)
-except:
-    existing = {}
+# Load existing settings
+with open(settings_file, 'r') as f:
+    existing = json.load(f)
 
+# Only add keys that don't exist in existing
 for key, value in new_settings.items():
     if key not in existing:
         existing[key] = value
-    elif isinstance(value, list) and isinstance(existing[key], list):
-        for item in value:
-            if item not in existing[key]:
-                existing[key].append(item)
-    elif isinstance(value, dict) and isinstance(existing[key], dict):
-        for subkey, subvalue in value.items():
-            if subkey not in existing[key]:
-                existing[key][subkey] = subvalue
+        print(f"  Added: {key}")
+    else:
+        print(f"  Skipped (exists): {key}")
 
+# Write merged result
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
-print("✅ settings.json updated")
+print("✅ settings.json merged")
 PYEOF
         else
             echo "  ⚠️  Python not found, skipping merge"
@@ -200,10 +185,8 @@ PYEOF
 
 # Determine installation method
 if is_pipe; then
-    # Running via curl | bash
     install_from_github
 else
-    # Running locally
     install_from_local
 fi
 
