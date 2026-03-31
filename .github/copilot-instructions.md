@@ -5,30 +5,29 @@ description: Instrucciones para commits y PRs
 
 # Reglas para Mensajes de Commit
 
-- Usa el formato Conventional Commits (feat, fix, etc.).
-- No uses emojis.
-- Formato: `<type>(<scope>): <subject>`
+- Usa el formato Conventional Commits (feat ✨, fix 🐛, etc.).
+- Formato: `<type>(<scope>): <emoji> <subject>`
 
 ## Types permitidos
 
-- **feat**: Nuevas funcionalidades
-- **fix**: Corrección de bugs
-- **chore**: Tareas de mantenimiento
-- **refactor**: Refactorización de código
-- **docs**: Documentación
-- **style**: Estilos (formateo)
-- **test**: Pruebas
-- **build**: Build y dependencias
-- **ci**: Configuración de CI/CD
-- **perf**: Optimizaciones de rendimiento
+- **feat ✨**: Nuevas funcionalidades
+- **fix 🐛**: Corrección de bugs
+- **chore 🔧**: Tareas de mantenimiento
+- **refactor 🛠️**: Refactorización de código
+- **docs 📝**: Documentación
+- **style 🎨**: Estilos (formateo)
+- **test ✅**: Pruebas
+- **build 📦**: Build y dependencias
+- **ci 👷**: Configuración de CI/CD
+- **perf ⚡**: Optimizaciones de rendimiento
 
 ## Ejemplos
 
-- `feat(ui): Add floating contact button`
-- `fix(api): Resolve user data fetch timeout`
-- `docs: Update README installation steps`
-- `refactor: Simplify authentication flow`
-- `chore: Update dependencies`
+- `feat(ui): ✨ Add floating contact button`
+- `fix(api): 🐛 Resolve user data fetch timeout`
+- `docs: 📝 Update README installation steps`
+- `refactor: 🛠️ Simplify authentication flow`
+- `chore: 🔧 Update dependencies`
 
 ## Reglas adicionales
 
