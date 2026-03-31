@@ -88,11 +88,17 @@ The project includes a landing page at `web/index.html` that displays:
 - Features overview
 - Version badge (auto-updates on release via GitHub Actions)
 
-To view the landing page locally:
+### Deploy to Cloudflare Pages
+
 ```bash
-# Serve the web directory
-cd web && python3 -m http.server 8000
+# Install wrangler if needed
+npm install -g wrangler
+
+# Deploy to Cloudflare Pages
+wrangler pages deploy web --project-name=github-ai
 ```
+
+The landing page will be available at `vscode.daes.dev`
 
 ## Requirements
 
