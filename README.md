@@ -12,12 +12,6 @@ This repo provides instructions that make GitHub Copilot generate better commit 
 curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 ```
 
-Or use the shorter alias (create a redirect if you want):
-
-```bash
-# Coming soon: bit.ly/github-ai-setup
-```
-
 ## Features
 
 - **Conventional Commits**: Standardized commit message format with type, scope, emoji, and subject
