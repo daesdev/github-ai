@@ -48,26 +48,10 @@ The installer creates these files in your project:
 └── copilot-instructions.md    # AI instructions for commits and PRs
 ```
 
-And adds this to `.vscode/settings.json`:
-
-```json
-{
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "file": ".github/copilot-instructions.md"
-    }
-  ],
-  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
-    {
-      "file": ".github/copilot-instructions.md"
-    }
-  ]
-}
-```
-
 ## How It Works
 
 GitHub Copilot uses the instruction file to generate:
+
 - **Commit Messages**: AI-generated messages following Conventional Commits format
 - **PR Descriptions**: AI-generated titles and descriptions with structured templates
 
@@ -76,6 +60,7 @@ The settings point Copilot to `.github/copilot-instructions.md`.
 ## Backup & Safety
 
 Before modifying `.vscode/settings.json`, the installer:
+
 1. Creates a backup in `~/.daes/` with timestamp
 2. Only adds new keys if they don't exist (preserves existing settings)
 3. Restores from backup if something fails
@@ -83,6 +68,7 @@ Before modifying `.vscode/settings.json`, the installer:
 ## Landing Page
 
 The project includes a landing page at `web/index.html` that displays:
+
 - Installation command
 - Features overview
 - Version badge (auto-updates on release via GitHub Actions)
