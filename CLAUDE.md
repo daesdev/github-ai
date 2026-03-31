@@ -4,21 +4,21 @@ Context file for AI assistants working on this repository.
 
 ## Project Overview
 
-This repository provides installation scripts and configuration files to help developers set up GitHub Copilot with custom commit message and pull request instructions using a single command.
+This repository provides installation scripts and configuration files to help developers set up GitHub Copilot with custom commit message and pull request instructions using AI-powered generation.
 
 ## Purpose
 
 - One-command installation via `curl | bash`
-- Standardize commit messages across projects using Conventional Commits
-- Generate structured PR descriptions automatically
+- AI-powered commit messages following Conventional Commits format
+- AI-powered PR descriptions with structured templates
 
 ## Files Structure
 
 ```
 github-ai/
 ├── .github/ai/
-│   ├── commit-message.md      # Instructions for commit messages
-│   └── pr-description.md      # Instructions for PR descriptions
+│   ├── commit-message.md      # AI instructions for commit messages
+│   └── pr-description.md      # AI instructions for PR descriptions
 ├── .vscode/settings.json      # VS Code Copilot configuration
 ├── install.sh                 # Installation script (works standalone)
 ├── Makefile                   # Make commands
@@ -32,19 +32,14 @@ github-ai/
 
 1. **One-liner (recommended)**:
    ```bash
-   curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
+   curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
    ```
 
 2. **Clone and run**:
    ```bash
-   git clone https://github.com/darioesp/github-ai.git
+   git clone https://github.com/daesdev/github-ai.git
    cd your-project
    make install
-   ```
-
-3. **Direct script**:
-   ```bash
-   ./install.sh
    ```
 
 ### install.sh Behavior
@@ -52,8 +47,10 @@ github-ai/
 - Detects if running from curl pipe or local clone
 - Downloads files from GitHub if from curl pipe
 - Copies files locally if from cloned repo
-- Safely merges settings.json (preserves existing settings)
-- Creates backup of files before overwriting
+- Creates backup before modifying `.vscode/settings.json` (`~/.daes/`)
+- Creates local `.bak` file for safety
+- Merges settings.json preserving existing keys
+- Restores from backup if something fails
 
 ## Key Technologies
 
@@ -63,13 +60,23 @@ github-ai/
 - JSON (settings.json)
 - Markdown (instructions files)
 
+## VS Code Settings Keys
+
+The installer adds these keys to `.vscode/settings.json`:
+
+- `github.copilot.chat.commitMessageGeneration.instructions` - AI instructions for commit messages
+- `github.copilot.chat.pullRequestDescriptionGeneration.instructions` - AI instructions for PR descriptions
+
+Both use the format: `[{"file": ".github/ai/commit-message.md"}]`
+
 ## Installation Flow
 
 1. User runs `curl | bash` or `make install`
 2. Script creates `.github/ai/` directory in target project
 3. Copies instruction .md files (updates if exist)
-4. Updates `.vscode/settings.json` with Copilot config (merges, doesn't overwrite)
-5. User commits with Conventional Commits format!
+4. Backs up existing `.vscode/settings.json` to `~/.daes/`
+5. Merges Copilot instruction keys into settings.json (preserves existing)
+6. User commits with AI-generated Conventional Commits format!
 
 ## Common Tasks
 
@@ -77,35 +84,29 @@ github-ai/
 
 1. Add file to `.github/ai/`
 2. Update `install.sh` to copy the new file
-3. Update `.vscode/settings.json` with new instruction reference
+3. Update `_write_vscode_settings_merge()` with new instruction key
 4. Update README.md with usage example
 
 ### Testing installation
 
 ```bash
-# Create test directory
-mkdir -p /tmp/test-project
-cd /tmp/test-project
-
 # Test curl method
-curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
+curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 
 # Verify files
 ls -la .github/ai/
 cat .vscode/settings.json
 ```
 
-### Updating the installer
+### Restoring backup
 
-- Keep install.sh portable (bash, minimal dependencies)
-- Test merge logic for settings.json carefully
-- Handle edge cases: new project, existing settings, missing directories
-- Support both curl pipe and local execution modes
+Backups are stored in `~/.daes/` with timestamp format: `settings_YYYYMMDD_HHMMSS.json`
 
 ## Edge Cases Handled
 
-- Settings already present → skip merge, notify user
-- Python3 available → use for safe JSON merge
-- No Python → fallback to basic merge
-- Already has .github/ai/ with other files → preserve other files
-- First run vs update → both handled gracefully
+- Settings already present → merges, preserves existing keys
+- Python3 not available → skips settings configuration
+- Invalid JSON in settings.json → uses backup or starts fresh
+- Network failure during curl → shows error and exits
+- Missing source files (local mode) → exits with error
+- Script interruption → cleanup temp files via trap
