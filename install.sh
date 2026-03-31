@@ -7,108 +7,86 @@ set -e
 
 echo "🚀 GitHub AI Setup"
 
-# Default base URL
 BASE_URL="${GITHUB_AI_BASE_URL:-https://raw.githubusercontent.com/daesdev/github-ai/main}"
 
-# Check if we have stdin (curl | bash) or running locally
+TEMP_DIR=""
+cleanup() {
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+    fi
+}
+trap cleanup EXIT INT TERM
+
 is_pipe() {
-    [ -t 0 ] && return 1 || return 0
+    [ ! -t 0 ]
 }
 
-install_from_github() {
-    local temp_dir=$(mktemp -d)
-    
-    echo "📥 Downloading files from GitHub..."
-    
-    # Download commit-message.md
-    echo "  Downloading commit-message.md..."
-    local commit_file=$(curl -sL "$BASE_URL/.github/ai/commit-message.md")
-    if echo "$commit_file" | grep -q "404"; then
-        echo "❌ Error: Could not find commit-message.md"
-        rm -rf "$temp_dir"
-        exit 1
-    fi
-    echo "$commit_file" > "$temp_dir/commit-message.md"
-    
-    # Download pr-description.md
-    echo "  Downloading pr-description.md..."
-    local pr_file=$(curl -sL "$BASE_URL/.github/ai/pr-description.md")
-    if echo "$pr_file" | grep -q "404"; then
-        echo "❌ Error: Could not find pr-description.md"
-        rm -rf "$temp_dir"
-        exit 1
-    fi
-    echo "$pr_file" > "$temp_dir/pr-description.md"
-    
-    # Create directories
-    mkdir -p .github/ai
-    
-    # Install instruction files
-    echo "📄 Installing instruction files..."
-    cp -f "$temp_dir/commit-message.md" .github/ai/
-    cp -f "$temp_dir/pr-description.md" .github/ai/
-    echo "  ✅ Installed .github/ai/commit-message.md"
-    echo "  ✅ Installed .github/ai/pr-description.md"
-    
-    # Add VS Code settings
-    echo "📝 Configuring VS Code settings..."
-    configure_vscode_settings
-    
-    rm -rf "$temp_dir"
-}
-
-install_from_local() {
-    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
-    # Create directories
-    mkdir -p .github/ai
-    
-    # Install instruction files
-    echo "📄 Installing instruction files..."
-    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
-    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
-    echo "  ✅ Installed .github/ai/commit-message.md"
-    echo "  ✅ Installed .github/ai/pr-description.md"
-    
-    # Add VS Code settings
-    echo "📝 Configuring VS Code settings..."
-    configure_vscode_settings
-}
-
-configure_vscode_settings() {
-    # Ensure .vscode directory exists
-    mkdir -p .vscode
-    
+backup_settings() {
     if [ -f ".vscode/settings.json" ]; then
-        # Backup first
         BACKUP_DIR="$HOME/.daes"
         mkdir -p "$BACKUP_DIR"
         TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
         cp -f .vscode/settings.json "$BACKUP_DIR/settings_${TIMESTAMP}.json"
-        echo "  ✅ Backed up settings.json"
-        
-        # Use python to safely add keys
-        if command -v python3 &> /dev/null; then
-            python3 << 'PYEOF'
+        echo "  ✅ Backed up settings.json to $BACKUP_DIR"
+        return 0
+    fi
+    return 1
+}
+
+restore_settings() {
+    BACKUP_DIR="$HOME/.daes"
+    LATEST=$(ls -t "$BACKUP_DIR"/settings_*.json 2>/dev/null | head -1)
+    if [ -n "$LATEST" ]; then
+        cp -f "$LATEST" .vscode/settings.json
+        echo "  ✅ Restored settings.json from backup"
+    fi
+}
+
+configure_vscode_settings() {
+    mkdir -p .vscode
+    
+    backup_settings || true
+    
+    if ! command -v python3 &> /dev/null; then
+        echo "  ❌ Python3 not found. Cannot configure VS Code settings."
+        exit 1
+    fi
+    
+    python3 - << 'PYEOF'
 import json
+import os
+import sys
 
 settings_file = '.vscode/settings.json'
+backup_file = settings_file + '.bak'
 
-# Keys to add
 commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
 commit_value = [{"file": ".github/ai/commit-message.md"}]
 
 pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
 pr_value = [{"file": ".github/ai/pr-description.md"}]
 
-# Load existing
-try:
-    with open(settings_file, 'r') as f:
-        settings = json.load(f)
-except:
-    settings = {}
+settings = {}
+if os.path.exists(settings_file):
+    try:
+        with open(settings_file, 'r') as f:
+            content = f.read().strip()
+            if content:
+                settings = json.loads(content)
+    except json.JSONDecodeError:
+        if os.path.exists(backup_file):
+            try:
+                with open(backup_file, 'r') as f:
+                    settings = json.load(f)
+                print("  ⚠️  Invalid JSON, restored from backup")
+            except:
+                settings = {}
+        else:
+            settings = {}
+    except Exception as e:
+        print(f"  ⚠️  Error reading settings.json: {e}")
+        settings = {}
 
-# Add keys only if they don't exist
 if commit_key not in settings:
     settings[commit_key] = commit_value
     print(f"  ✅ Added: {commit_key}")
@@ -121,23 +99,95 @@ if pr_key not in settings:
 else:
     print(f"  ⏭️  Skipped (exists): {pr_key}")
 
-# Write back
-with open(settings_file, 'w') as f:
-    json.dump(settings, f, indent=2)
-
-print("✅ VS Code settings configured")
+try:
+    with open(settings_file, 'w') as f:
+        json.dump(settings, f, indent=2)
+    print("✅ VS Code settings configured")
+except Exception as e:
+    print(f"  ❌ Error writing settings.json: {e}")
+    sys.exit(1)
 PYEOF
-        else
-            echo "  ⚠️  Python not found, skipping settings"
-        fi
-    else
-        # No existing file, create new one with just the AI keys
-        echo '{"github.copilot.chat.commitMessageGeneration.instructions": [{"file": ".github/ai/commit-message.md"}], "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [{"file": ".github/ai/pr-description.md"}]}' > .vscode/settings.json
-        echo "  ✅ Created settings.json"
+    
+    if [ $? -ne 0 ]; then
+        echo "  ❌ Failed to configure settings, restoring backup..."
+        restore_settings
+        exit 1
     fi
 }
 
-# Determine installation method
+download_file() {
+    local url="$1"
+    local label="$2"
+    local content
+    
+    echo "  Downloading ${label}..."
+    content=$(curl -sL --fail "$url") || {
+        echo "  ❌ Error: Could not download ${label}"
+        exit 1
+    }
+    
+    if echo "$content" | grep -q "404"; then
+        echo "  ❌ Error: ${label} not found"
+        exit 1
+    fi
+    
+    echo "$content"
+}
+
+install_from_github() {
+    TEMP_DIR=$(mktemp -d)
+    
+    echo "📥 Downloading files from GitHub..."
+    
+    local commit_file
+    commit_file=$(download_file "$BASE_URL/.github/ai/commit-message.md" "commit-message.md")
+    echo "$commit_file" > "$TEMP_DIR/commit-message.md"
+    echo "  ✅ Downloaded commit-message.md"
+    
+    local pr_file
+    pr_file=$(download_file "$BASE_URL/.github/ai/pr-description.md" "pr-description.md")
+    echo "$pr_file" > "$TEMP_DIR/pr-description.md"
+    echo "  ✅ Downloaded pr-description.md"
+    
+    mkdir -p .github/ai
+    
+    echo "📄 Installing instruction files..."
+    cp -f "$TEMP_DIR/commit-message.md" .github/ai/
+    cp -f "$TEMP_DIR/pr-description.md" .github/ai/
+    echo "  ✅ Installed .github/ai/commit-message.md"
+    echo "  ✅ Installed .github/ai/pr-description.md"
+    
+    echo "📝 Configuring VS Code settings..."
+    configure_vscode_settings
+}
+
+install_from_local() {
+    local script_dir
+    if [ -n "${BASH_SOURCE[0]:-}" ]; then
+        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    else
+        script_dir="$(cd "$(dirname "$0")" && pwd)"
+    fi
+    
+    for f in ".github/ai/commit-message.md" ".github/ai/pr-description.md"; do
+        if [ ! -f "$script_dir/$f" ]; then
+            echo "❌ Missing source file: $script_dir/$f"
+            exit 1
+        fi
+    done
+    
+    mkdir -p .github/ai
+    
+    echo "📄 Installing instruction files..."
+    cp -f "$script_dir/.github/ai/commit-message.md" .github/ai/
+    cp -f "$script_dir/.github/ai/pr-description.md" .github/ai/
+    echo "  ✅ Installed .github/ai/commit-message.md"
+    echo "  ✅ Installed .github/ai/pr-description.md"
+    
+    echo "📝 Configuring VS Code settings..."
+    configure_vscode_settings
+}
+
 if is_pipe; then
     install_from_github
 else
@@ -150,7 +200,9 @@ echo ""
 echo "Your project now has:"
 echo "  - .github/ai/commit-message.md"
 echo "  - .github/ai/pr-description.md"
-echo "  - .vscode/settings.json (with AI instructions)"
+echo "  - .vscode/settings.json (with Copilot AI instructions)"
+echo ""
+echo "📦 Backup location: $HOME/.daes/settings_*.json"
 echo ""
 echo "Commit messages will now follow Conventional Commits format!"
 echo ""
