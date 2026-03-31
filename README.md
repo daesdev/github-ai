@@ -129,7 +129,7 @@ make uninstall
 
 - Git (for clone method)
 - Bash
-- (Optional) Python3 (for JSON merge)
+- Python3 (required for JSON merge)
 - (Optional) Make
 
 ## Contributing

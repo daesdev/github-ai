@@ -57,7 +57,8 @@ github-ai/
 
 ## Key Technologies
 
-- Bash (install.sh) - No external dependencies
+- Bash (install.sh)
+- Python3 (required for JSON merge)
 - Make
 - JSON (settings.json)
 - Markdown (instructions files)

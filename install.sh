@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # GitHub AI Setup - Single Command Installer
-# Usage: curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
+# Usage: curl -sL https://raw.githubusercontent.com/darioesp/github-ai/main/install.sh | bash
 
 set -e
 
 echo "🚀 GitHub AI Setup"
 
 # Default base URL
-BASE_URL="${GITHUB_AI_BASE_URL:-https://raw.githubusercontent.com/daesdev/github-ai/main}"
+BASE_URL="${GITHUB_AI_BASE_URL:-https://raw.githubusercontent.com/darioesp/github-ai/main}"
 
 # Check if we have stdin (curl | bash) or running locally
 is_pipe() {
