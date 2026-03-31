@@ -1,3 +1,4 @@
+  Downloading commit-message.md...
 ---
 name: 'Conventional Commit Messages'
 description: 'Generate commit messages using Conventional Commits format with emoji'
