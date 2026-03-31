@@ -155,3 +155,46 @@ All modifications to `settings.json`:
 - Network failure during curl → shows error and exits
 - Missing source files (local mode) → exits with error
 - Script interruption → cleanup temp files via trap
+
+## Release Process
+
+### Version Format
+`v[year-short].[month-number].[day-number][hours-format24]`
+- Example: `v26.03.31.13` (year: 2026, month: 03, day: 31, hour: 13)
+
+### Steps to Create Release
+
+1. **Delete old tags locally and remotely**:
+```bash
+git tag -l                          # List current tags
+git tag -d <tag1> <tag2> ...        # Delete local tags
+git push origin --delete <tag1> <tag2>...  # Delete remote tags
+```
+
+2. **Generate new version**:
+```bash
+date +"v%y.%m.%d.%H"               # Generate version format
+```
+
+3. **Create release using git flow**:
+```bash
+git flow release start <version>    # Create release branch
+git flow release finish -m "v<version>" <version>  # Finish release
+```
+
+4. **Push to origin**:
+```bash
+git push -u origin main develop --tags
+```
+
+5. **Create GitHub Release** (if gh has workflow scope):
+```bash
+gh auth refresh -h github.com -s workflow  # If needed
+gh release create <version> --title "<version>" --notes "<description>"
+```
+
+### Important Notes
+- Always use git flow for releases
+- Delete old tags before creating new ones
+- Format: vYY.MM.DD.HH (24-hour format for hours)
+- Requires `workflow` scope in gh auth to create GitHub releases
