@@ -73,12 +73,6 @@ GitHub Copilot uses the instruction file to generate:
 
 The settings point Copilot to `.github/copilot-instructions.md`.
 
-GitHub Copilot uses the instruction files to generate:
-- **Commit Messages**: AI-generated messages following Conventional Commits format
-- **PR Descriptions**: AI-generated titles and descriptions with structured templates
-
-The settings point Copilot to the instruction files in `.github/ai/`.
-
 ## Backup & Safety
 
 Before modifying `.vscode/settings.json`, the installer:

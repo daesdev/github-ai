@@ -19,6 +19,7 @@ github-ai/
 ├── .github/
 │   ├── copilot-instructions.md     # AI instructions for commits and PRs
 │   └── workflows/
+│       ├── deploy.yml              # Auto-deploy to Cloudflare Pages on push to main
 │       └── update-website.yml      # Auto-update version badge on release
 ├── .vscode/settings.json           # VS Code Copilot configuration
 ├── web/index.html                  # Landing page with version badge
@@ -87,6 +88,7 @@ wrangler pages deploy web --project-name=github-ai
 ```
 
 ### GitHub Actions
+- `deploy.yml`: Auto-deploy to Cloudflare Pages on push to main
 - `update-website.yml`: Auto-updates version badge in `web/index.html` on release
 
 ## VS Code Settings Keys
@@ -96,25 +98,24 @@ The installer adds these keys to `.vscode/settings.json`:
 - `github.copilot.chat.commitMessageGeneration.instructions` - AI instructions for commit messages
 - `github.copilot.chat.pullRequestDescriptionGeneration.instructions` - AI instructions for PR descriptions
 
-Both use the format: `[{"file": ".github/ai/commit-message.md"}]`
+Both use the format: `[{"file": ".github/copilot-instructions.md"}]`
 
 ## Installation Flow
 
 1. User runs `curl | bash` or `make install`
-2. Script creates `.github/ai/` directory in target project
-3. Copies instruction .md files (updates if exist)
+2. Script creates `.github/` directory in target project
+3. Copies `copilot-instructions.md` (updates if exist)
 4. Backs up existing `.vscode/settings.json` to `~/.daes/`
 5. Merges Copilot instruction keys into settings.json (preserves existing)
 6. User commits with AI-generated Conventional Commits format!
 
 ## Common Tasks
 
-### Adding a new instruction file
+### Updating instruction file
 
-1. Add file to `.github/ai/`
-2. Update `install.sh` to copy the new file
-3. Update `configure_vscode_settings()` with new instruction key
-4. Update README.md with usage example
+1. Update `.github/copilot-instructions.md` directly
+2. Run `git flow release` to publish new version
+3. The installer will fetch the latest version automatically
 
 ### Testing installation
 
@@ -123,7 +124,7 @@ Both use the format: `[{"file": ".github/ai/commit-message.md"}]`
 curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
 
 # Verify files
-ls -la .github/ai/
+ls -la .github/
 cat .vscode/settings.json
 ```
 
