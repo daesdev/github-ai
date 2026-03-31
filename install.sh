@@ -68,7 +68,7 @@ install_from_github() {
             echo "⚠️  AI settings already present, skipping..."
         else
             if command -v python3 &> /dev/null; then
-                python3 << PYEOF
+                python3 << 'PYEOF'
 import json
 
 settings_file = '.vscode/settings.json'
@@ -79,7 +79,15 @@ try:
 except:
     existing = {}
 
-existing.update(new_settings)
+for key, value in new_settings.items():
+    if key not in existing:
+        existing[key] = value
+    elif isinstance(value, list) and isinstance(existing[key], list):
+        existing[key] = existing[key] + value
+    elif isinstance(value, dict) and isinstance(existing[key], dict):
+        existing[key] = {**existing[key], **value}
+    else:
+        existing[key] = value
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
@@ -121,7 +129,7 @@ install_from_local() {
             echo "⚠️  AI settings already present, skipping..."
         else
             if command -v python3 &> /dev/null; then
-                python3 << PYEOF
+                python3 << 'PYEOF'
 import json
 
 settings_file = '.vscode/settings.json'
@@ -132,7 +140,15 @@ try:
 except:
     existing = {}
 
-existing.update(new_settings)
+for key, value in new_settings.items():
+    if key not in existing:
+        existing[key] = value
+    elif isinstance(value, list) and isinstance(existing[key], list):
+        existing[key] = existing[key] + value
+    elif isinstance(value, dict) and isinstance(existing[key], dict):
+        existing[key] = {**existing[key], **value}
+    else:
+        existing[key] = value
 
 with open(settings_file, 'w') as f:
     json.dump(existing, f, indent=2)
