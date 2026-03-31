@@ -1,4 +1,6 @@
 {
+  "editor.fontSize": 14,
+  "editor.tabSize": 2,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
       "file": ".github/ai/commit-message.md"
