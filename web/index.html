@@ -6,86 +6,100 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>
-    GitHub AI Setup | AI-Powered Commit Messages & PR Descriptions
+    VS Code AI Setup | AI-Powered Commit Messages & PR Descriptions
   </title>
   <meta name="description"
     content="Set up GitHub Copilot with AI-powered commit messages and PR descriptions. One-command install with backup & restore safety features." />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <meta name="theme-color" content="#050505" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- tailwindcss -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
+  <!-- Preconnect to external resources for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://unpkg.com" />
+
+  <!-- Lazy load fonts for performance -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap"
-    rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-    rel="stylesheet" />
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            'on-secondary': '#3f2e00',
-            'on-surface-variant': '#c3c9b2',
-            'surface-container-low': '#1c1b1b',
-            'secondary-fixed-dim': '#f7be21',
-            'secondary-fixed': '#ffdf9c',
-            'on-tertiary': '#233143',
-            'tertiary-fixed-dim': '#b9c8de',
-            'surface-tint': '#a4d64c',
-            'on-primary-container': '#4b6e00',
-            background: '#050505',
-            secondary: '#ffc735',
-            'on-surface': '#e5e2e1',
-            tertiary: '#fffdff',
-            'primary-fixed': '#bff365',
-            'surface-variant': '#353534',
-            'inverse-surface': '#e5e2e1',
-            'on-tertiary-container': '#566578',
-            'on-secondary-container': '#594200',
-            'on-error-container': '#ffdad6',
-            'primary-fixed-dim': '#a4d64c',
-            'on-error': '#690005',
-            'on-tertiary-fixed': '#0d1c2d',
-            outline: '#8d937e',
-            'inverse-primary': '#476800',
-            'surface-container': '#201f1f',
-            'on-secondary-fixed': '#251a00',
-            'surface-dim': '#131313',
-            'tertiary-container': '#d3e2f9',
-            'surface-container-lowest': '#0e0e0e',
-            'on-background': '#e5e2e1',
-            'secondary-container': '#e1ab00',
-            'surface-bright': '#3a3939',
-            primary: '#fefff1',
-            'on-secondary-fixed-variant': '#5b4300',
-            'tertiary-fixed': '#d4e4fa',
-            'inverse-on-surface': '#313030',
-            'primary-container': '#bef264',
-            'outline-variant': '#434938',
-            'on-primary-fixed': '#131f00',
-            'on-primary': '#233600',
-            'surface-container-highest': '#353534',
-            'on-primary-fixed-variant': '#354e00',
-            'surface-container-high': '#2a2a2a',
-            'on-tertiary-fixed-variant': '#39485a',
-            'error-container': '#93000a',
-            error: '#ffb4ab',
-            surface: '#131313',
-          },
-          fontFamily: {
-            headline: ['Inter'],
-            body: ['Inter'],
-            label: ['Space Grotesk'],
-          },
-          borderRadius: {
-            DEFAULT: '0.125rem',
-            lg: '0.25rem',
-            xl: '0.5rem',
-            full: '0.75rem',
-          },
-        },
-      },
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet" />
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet" />
+  </noscript>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-on-secondary: #3f2e00;
+      --color-on-surface-variant: #c3c9b2;
+      --color-surface-container-low: #1c1b1b;
+      --color-secondary-fixed-dim: #f7be21;
+      --color-secondary-fixed: #ffdf9c;
+      --color-on-tertiary: #233143;
+      --color-tertiary-fixed-dim: #b9c8de;
+      --color-surface-tint: #a4d64c;
+      --color-on-primary-container: #4b6e00;
+      --color-background: #050505;
+      --color-secondary: #ffc735;
+      --color-on-surface: #e5e2e1;
+      --color-tertiary: #fffdff;
+      --color-primary-fixed: #bff365;
+      --color-surface-variant: #353534;
+      --color-inverse-surface: #e5e2e1;
+      --color-on-tertiary-container: #566578;
+      --color-on-secondary-container: #594200;
+      --color-on-error-container: #ffdad6;
+      --color-primary-fixed-dim: #a4d64c;
+      --color-on-error: #690005;
+      --color-on-tertiary-fixed: #0d1c2d;
+      --color-outline: #8d937e;
+      --color-inverse-primary: #476800;
+      --color-surface-container: #201f1f;
+      --color-on-secondary-fixed: #251a00;
+      --color-surface-dim: #131313;
+      --color-tertiary-container: #d3e2f9;
+      --color-surface-container-lowest: #0e0e0e;
+      --color-on-background: #e5e2e1;
+      --color-secondary-container: #e1ab00;
+      --color-surface-bright: #3a3939;
+      --color-primary: #fefff1;
+      --color-on-secondary-fixed-variant: #5b4300;
+      --color-tertiary-fixed: #d4e4fa;
+      --color-inverse-on-surface: #313030;
+      --color-primary-container: #bef264;
+      --color-outline-variant: #434938;
+      --color-on-primary-fixed: #131f00;
+      --color-on-primary: #233600;
+      --color-surface-container-highest: #353534;
+      --color-on-primary-fixed-variant: #354e00;
+      --color-surface-container-high: #2a2a2a;
+      --color-on-tertiary-fixed-variant: #39485a;
+      --color-error-container: #93000a;
+      --color-error: #ffb4ab;
+      --color-surface: #131313;
+      --font-headline: Inter;
+      --font-body: Inter;
+      --font-label: Space Grotesk;
+      --radius: 0.125rem;
+      --radius-lg: 0.25rem;
+      --radius-xl: 0.5rem;
+      --radius-full: 0.75rem;
     }
-  </script>
+
+    @layer base {
+      :root {
+        color-scheme: dark;
+      }
+    }
+  </style>
   <style>
     .material-symbols-outlined {
       font-variation-settings:
@@ -107,254 +121,470 @@
   <style>
     body {
       min-height: max(884px, 100dvh);
+      scroll-behavior: auto;
     }
   </style>
 </head>
 
+
 <body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
   <!-- TopAppBar -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-[#050505] border-b border-outline-variant/10">
-    <nav class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-lime-300" data-icon="terminal">terminal</span>
-        <span class="font-inter font-black tracking-tighter text-[#bef264] text-xl">GITHUB AI</span>
+  <header class="fixed top-0 left-0 right-0 z-50 bg-[#050505]/90 backdrop-blur-sm border-b border-outline-variant/10">
+    <nav class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+      <div class="flex items-center gap-3">
+        <!-- VS Code SVG Icon (Tabler) -->
+        <svg class="w-6 h-6 text-[#bef264]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          width="24" height="24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 3v18l4 -2.5v-13l-4 -2.5" />
+          <path d="M9.165 13.903l-4.165 3.597l-2 -1l4.333 -4.5m1.735 -1.802l6.932 -7.198v5l-4.795 4.141" />
+          <path d="M16 16.5l-11 -10l-2 1l13 13.5" />
+        </svg>
+        <span class="font-inter font-black tracking-tighter text-[#bef264] text-lg">VS Code AI Setup</span>
         <span id="versionBadge"
-          class="ml-2 px-2 py-0.5 bg-primary-container/20 text-primary-container font-mono text-[10px] rounded">v26.03.311618</span>
+          class="ml-2 px-2 py-0.5 bg-primary-container/20 text-primary-container font-mono text-[10px] rounded-sm">v26.03.311618</span>
       </div>
-      <button id="installBtn" onclick="copyInstall()"
-        class="bg-primary-container text-on-primary font-label text-[10px] tracking-widest font-bold px-4 py-1.5 rounded-sm hover:scale-95 transition-all duration-150 flex items-center gap-2">
-        <span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span>
-        COPY COMMAND
-      </button>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com/daesdev/github-ai" target="_blank" rel="noopener noreferrer"
+          class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center gap-1.5 text-sm font-medium"
+          aria-label="Star on GitHub">
+          <span class="material-symbols-outlined text-lg" data-icon="star">star</span>
+          <span class="hidden sm:inline">Star</span>
+        </a>
+        <a href="https://github.com/daesdev/github-ai/blob/main/README.md" target="_blank" rel="noopener noreferrer"
+          class="text-on-surface-variant hover:text-primary-container transition-colors flex items-center gap-1.5 text-sm font-medium"
+          aria-label="Documentation">
+          <span class="material-symbols-outlined text-lg" data-icon="menu_book">menu_book</span>
+          <span class="hidden sm:inline">Docs</span>
+        </a>
+      </div>
     </nav>
   </header>
-  <main class="pt-24 pb-12 px-6">
+
+  <main class="pt-20 pb-12 px-6">
     <!-- Hero Section -->
-    <section class="max-w-4xl mx-auto text-center mb-16">
-      <div class="inline-block px-3 py-1 mb-6 rounded-sm bg-surface-container-high border-l-2 border-secondary">
-        <span class="font-label text-secondary text-[10px] tracking-widest font-bold">COPILOT INTEGRATION</span>
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24" aria-labelledby="hero-heading">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <!-- Column 1: Content -->
+        <div class="text-left">
+          <div
+            class="inline-block px-3 py-1 mb-6 rounded-full bg-surface-container-high border border-outline-variant/20">
+            <span class="font-label text-secondary text-[10px] tracking-widest font-bold">VS CODE + GITHUB
+              COPILOT</span>
+          </div>
+
+          <h1 id="hero-heading"
+            class="font-headline font-black text-4xl md:text-5xl lg:text-6xl tracking-tight text-on-surface mb-4 leading-tight">
+            GitHub Copilot that writes
+            <span class="text-primary-container">your commits for you</span>
+          </h1>
+
+          <p class="font-body text-on-surface-variant text-lg md:text-xl mb-8 leading-relaxed text-pretty">
+            Generates Conventional Commits automatically when you commit, and intelligent PR descriptions when you
+            create a pull request. All with a single
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 items-start mb-8" role="group" aria-label="Install options">
+            <button onclick="copyInstall()"
+              class="bg-primary-container text-on-primary font-label text-sm tracking-widest font-bold px-6 py-3 rounded-lg hover:scale-105 transition-all duration-200 flex items-center gap-2 shadow-lg shadow-primary-container/20"
+              aria-label="Copy install command to clipboard">
+              <span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+              COPY INSTALL COMMAND
+            </button>
+            <a href="https://github.com/daesdev/github-ai" target="_blank" rel="noopener noreferrer"
+              class="bg-surface-container text-on-surface font-label text-sm tracking-widest font-bold px-6 py-3 rounded-lg hover:bg-surface-container-high transition-all duration-200 flex items-center gap-2"
+              aria-label="View on GitHub">
+              <span class="material-symbols-outlined text-lg" data-icon="star">star</span>
+              STAR ON GITHUB
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Column 2: Terminal + Gradient -->
+        <div class="relative flex flex-col justify-center lg:justify-end">
+          <!-- Radial Gradient Background -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+            <div
+              class="w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-full bg-[#bef264] opacity-[0.08] blur-[100px]">
+            </div>
+          </div>
+
+          <!-- Mac OS Terminal Window -->
+          <div-t class="relative w-full" role="region" aria-label="Install command example">
+            <div
+              class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden shadow-2xl">
+              <!-- Title Bar -->
+              <div
+                class="bg-surface-container px-4 py-3 flex items-center justify-between border-b border-outline-variant/10">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+                  <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+                  <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+                </div>
+                <span class="font-mono text-xs text-on-surface-variant">Terminal</span>
+                <div class="w-12"></div>
+              </div>
+              <!-- Terminal Content -->
+              <div class="p-6 font-mono">
+                <div class="flex items-center gap-3">
+                  <span class="text-primary-container text-sm">$</span>
+                  <code class="text-on-surface text-sm break-all">
+                    curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
+                  </code>
+                </div>
+                <div class="flex items-center gap-3 mt-2">
+                  <span class="text-primary-container text-sm">⏵</span>
+                  <span class="w-2 h-4 bg-primary-container animate-pulse"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trust Elements -->
+            <nav class="flex flex-wrap items-center gap-4 text-sm py-4 w-full justify-center"
+              aria-label="Trust indicators">
+              <span class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined text-primary-container text-base"
+                  data-icon="folder_open">folder_open</span>
+                <span class="font-medium">Open Source</span>
+              </span>
+              <span class="text-surface-variant">|</span>
+              <span class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined text-primary-container text-base" data-icon="gavel">gavel</span>
+                <span class="font-medium">MIT License</span>
+              </span>
+              <span class="text-surface-variant">|</span>
+              <span class="flex items-center gap-2 text-on-surface-variant">
+                <span class="material-symbols-outlined text-primary-container text-base"
+                  data-icon="settings">settings</span>
+                <span class="font-medium">VS Code Config</span>
+              </span>
+            </nav>
+
+        </div>
       </div>
-      <h1 class="font-headline font-black text-5xl md:text-7xl tracking-tighter leading-[0.9] text-on-surface mb-6">
-        AI-Powered<br />
-        <span class="text-primary-container">Commit Messages</span>
-      </h1>
-      <p class="font-body text-on-surface-variant text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
-        Set up GitHub Copilot to generate commit messages and PR descriptions
-        following Conventional Commits format. One command install.
-      </p>
-      <!-- CTA Terminal Block -->
-      <div id="install" class="relative group max-w-2xl mx-auto">
-        <div
-          class="absolute -inset-1 bg-primary-container/20 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000">
-        </div>
-        <div
-          class="relative bg-surface-container-lowest p-8 md:p-12 rounded-lg border border-outline-variant/20 font-mono overflow-hidden pulse-glow">
-          <div class="flex items-center gap-2 mb-6">
-            <div class="w-3 h-3 rounded-full bg-error/40"></div>
-            <div class="w-3 h-3 rounded-full bg-secondary/40"></div>
-            <div class="w-3 h-3 rounded-full bg-primary-container/40"></div>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="text-primary-container text-sm md:text-base pb-4">$</span>
-            <code class="text-on-surface text-sm md:text-base break-all lg:text-nowrap overflow-x-auto pb-4">
-              curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash
-            </code>
-            <span class="w-2 h-6 bg-primary-container animate-pulse mb-4"></span>
-          </div>
-        </div>
       </div>
     </section>
+
     <!-- How It Works Section -->
-    <section class="max-w-7xl mx-auto mb-24">
-      <div class="glass-panel p-8 md:p-12 rounded-xl border border-outline-variant/20">
-        <h2 class="font-headline font-bold text-2xl md:text-3xl text-on-surface mb-8 tracking-tight">
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24" aria-labelledby="how-it-works-heading">
+      <div class="glass-panel p-8 md:p-12 rounded-3xl border border-outline-variant/20">
+        <h2 id="how-it-works-heading"
+          class="font-headline font-bold text-2xl md:text-3xl text-on-surface mb-4 tracking-tight">
           How It Works
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="flex flex-col items-start">
-            <div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center mb-4">
-              <span class="font-mono font-bold text-primary-container text-sm">1</span>
+        <p class="text-on-surface-variant text-lg mb-8 max-w-2xl">
+          The installer configures your VS Code settings to point GitHub Copilot to custom instructions.
+          When you commit or create a PR, Copilot reads your instructions and generates optimized content.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" role="list">
+          <div class="flex flex-col items-start p-6 bg-surface-container/50 rounded-2xl" role="listitem">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center mb-4"
+              aria-hidden="true">
+              <span class="font-mono font-bold text-primary-container text-lg">1</span>
             </div>
-            <h3 class="font-headline font-bold text-lg text-on-surface mb-2">
-              Install
-            </h3>
+            <h3 class="font-headline font-bold text-xl text-on-surface mb-2">Run Install</h3>
             <p class="text-on-surface-variant text-sm leading-relaxed">
-              Run the one-liner installer in any project. Creates
-              <code class="font-mono text-xs bg-surface-container px-1 rounded">.github/ai/</code>
-              with instruction files.
+              Execute the one-liner command. Creates <code
+                class="font-mono text-xs bg-surface-container px-1 rounded">.github/copilot-instructions.md</code> with
+              your AI instructions.
             </p>
           </div>
-          <div class="flex flex-col items-start">
-            <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mb-4">
-              <span class="font-mono font-bold text-secondary text-sm">2</span>
+
+          <div class="flex flex-col items-start p-6 bg-surface-container/50 rounded-2xl" role="listitem">
+            <div class="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mb-4"
+              aria-hidden="true">
+              <span class="font-mono font-bold text-secondary text-lg">2</span>
             </div>
-            <h3 class="font-headline font-bold text-lg text-on-surface mb-2">
-              Configure
-            </h3>
+            <h3 class="font-headline font-bold text-xl text-on-surface mb-2">VS Code Config</h3>
             <p class="text-on-surface-variant text-sm leading-relaxed">
-              VS Code settings are updated to point Copilot to your
-              instruction files. Existing settings are preserved.
+              Updates <code class="font-mono text-xs bg-surface-container px-1 rounded">.vscode/settings.json</code> to
+              point Copilot to your instructions file. Preserves all existing settings.
             </p>
           </div>
-          <div class="flex flex-col items-start">
-            <div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center mb-4">
-              <span class="font-mono font-bold text-primary-container text-sm">3</span>
+
+          <div class="flex flex-col items-start p-6 bg-surface-container/50 rounded-2xl" role="listitem">
+            <div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center mb-4"
+              aria-hidden="true">
+              <span class="font-mono font-bold text-primary-container text-lg">3</span>
             </div>
-            <h3 class="font-headline font-bold text-lg text-on-surface mb-2">
-              Generate
-            </h3>
+            <h3 class="font-headline font-bold text-xl text-on-surface mb-2">AI Generation</h3>
             <p class="text-on-surface-variant text-sm leading-relaxed">
-              GitHub Copilot generates Conventional Commits formatted messages
-              and PR descriptions automatically.
+              GitHub Copilot reads your instructions and generates Conventional Commits automatically inside VS Code.
             </p>
           </div>
         </div>
       </div>
     </section>
+
     <!-- Features Section -->
-    <section class="max-w-7xl mx-auto mb-24">
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24">
       <h2 class="font-headline font-bold text-3xl md:text-4xl text-on-surface mb-12 tracking-tight">
         Features
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Feature 1 -->
-        <div class="bg-surface-container p-8 rounded-xl hover:bg-surface-container-high transition-colors group">
-          <div class="mb-6 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary-container group-hover:scale-110 transition-transform"
-              data-icon="edit_note">edit_note</span>
-            <h3 class="font-headline font-bold text-xl tracking-tight">
-              AI Commit Messages
-            </h3>
-          </div>
-          <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
-            GitHub Copilot generates commit messages using Conventional
-            Commits format with type, scope, emoji, and subject.
-          </p>
-          <div class="h-1 w-12 bg-primary-container/20 group-hover:w-full transition-all duration-500"></div>
-        </div>
-        <!-- Feature 2 -->
-        <div
-          class="bg-surface-container p-8 rounded-xl hover:bg-surface-container-high transition-colors group border-l-2 border-secondary/50">
-          <div class="mb-6 flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform"
-              data-icon="summarize">summarize</span>
-            <h3 class="font-headline font-bold text-xl tracking-tight">
-              AI PR Descriptions
-            </h3>
-          </div>
-          <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
-            Intelligent PR title and description generation with structured
-            templates for better code reviews.
-          </p>
-          <div class="h-1 w-12 bg-secondary/20 group-hover:w-full transition-all duration-500"></div>
-        </div>
-        <!-- Feature 3 -->
-        <div class="bg-surface-container p-8 rounded-xl hover:bg-surface-container-high transition-colors group">
-          <div class="mb-6 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary-container group-hover:scale-110 transition-transform"
-              data-icon="bolt">bolt</span>
-            <h3 class="font-headline font-bold text-xl tracking-tight">
-              One-Command Install
-            </h3>
-          </div>
-          <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
-            Works on any project with a single curl command. No complex setup
-            or configuration required.
-          </p>
-          <div class="h-1 w-12 bg-primary-container/20 group-hover:w-full transition-all duration-500"></div>
-        </div>
-        <!-- Feature 4 -->
-        <div class="bg-surface-container p-8 rounded-xl hover:bg-surface-container-high transition-colors group">
-          <div class="mb-6 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary-container group-hover:scale-110 transition-transform"
-              data-icon="shield">shield</span>
-            <h3 class="font-headline font-bold text-xl tracking-tight">
-              Safe & Secure
-            </h3>
-          </div>
-          <p class="text-on-surface-variant text-sm leading-relaxed mb-6">
-            Creates backups before modifying files. Preserves existing
-            settings. Restores from backup if something fails.
-          </p>
-          <div class="h-1 w-12 bg-primary-container/20 group-hover:w-full transition-all duration-500"></div>
-        </div>
-      </div>
-    </section>
-    <!-- What Gets Installed Section -->
-    <section class="max-w-4xl mx-auto mb-24">
-      <h2 class="font-headline font-bold text-3xl md:text-4xl text-on-surface mb-8 tracking-tight">
-        What Gets Installed
-      </h2>
-      <div class="bg-surface-container-lowest p-6 md:p-8 rounded-lg border border-outline-variant/20 font-mono text-sm">
-        <pre
-          class="text-on-surface-variant text-xs md:text-sm overflow-x-auto"><code><span class="text-secondary">.github/</span>
-<span class="text-secondary">└──</span> copilot-instructions.md    <span class="text-outline"># Copilot AI instructions</span>
 
-<span class="text-secondary">.vscode/settings.json</span>  <span class="text-outline"># Copilot configuration</span></code></pre>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Feature 1 - Window Style -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden group">
+          <!-- Window Title Bar -->
+          <div class="bg-surface-container px-5 py-3 flex items-center gap-2 border-b border-outline-variant/10">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+            <span class="ml-2 font-mono text-xs text-on-surface-variant">.github/copilot-instructions.md </span>
+          </div>
+          <!-- Window Content -->
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="material-symbols-outlined text-primary-container text-2xl"
+                data-icon="edit_note">edit_note</span>
+              <h3 class="font-headline font-bold text-2xl tracking-tight text-on-surface">
+                AI Commit Messages
+              </h3>
+            </div>
+            <p class="text-on-surface-variant text-sm leading-relaxed">
+              GitHub Copilot generates commit messages following Conventional Commits format with type, scope, emoji,
+              and subject.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 2 - Window Style -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden group">
+          <!-- Window Title Bar -->
+          <div class="bg-surface-container px-5 py-3 flex items-center gap-2 border-b border-outline-variant/10">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+            <span class="ml-2 font-mono text-xs text-on-surface-variant">.github/copilot-instructions.md</span>
+          </div>
+          <!-- Window Content -->
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="material-symbols-outlined text-secondary text-2xl" data-icon="summarize">summarize</span>
+              <h3 class="font-headline font-bold text-2xl tracking-tight text-on-surface">
+                AI PR Descriptions
+              </h3>
+            </div>
+            <p class="text-on-surface-variant text-sm leading-relaxed">
+              Use extensions like <a
+                href="https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github"
+                class="text-primary-container hover:underline">GitHub Pull Request and Issues</a> to edit your
+              instructions with Intelligent PR title and description generation with structured templates for better
+              code reviews.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 3 - Window Style -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden group">
+          <!-- Window Title Bar -->
+          <div class="bg-surface-container px-5 py-3 flex items-center gap-2 border-b border-outline-variant/10">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+            <span class="ml-2 font-mono text-xs text-on-surface-variant">install.sh</span>
+          </div>
+          <!-- Window Content -->
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="material-symbols-outlined text-primary-container text-2xl" data-icon="bolt">bolt</span>
+              <h3 class="font-headline font-bold text-2xl tracking-tight text-on-surface">
+                One-Command Install
+              </h3>
+            </div>
+            <p class="text-on-surface-variant text-sm leading-relaxed">
+              Works on any project with a single curl command. No complex setup or configuration required.
+            </p>
+          </div>
+        </div>
+
+        <!-- Feature 4 - Window Style -->
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 overflow-hidden group">
+          <!-- Window Title Bar -->
+          <div class="bg-surface-container px-5 py-3 flex items-center gap-2 border-b border-outline-variant/10">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></div>
+            <span class="ml-2 font-mono text-xs text-on-surface-variant">backup: $HOME/.daes/settings_*.json</span>
+          </div>
+          <!-- Window Content -->
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="material-symbols-outlined text-primary-container text-2xl" data-icon="shield">shield</span>
+              <h3 class="font-headline font-bold text-2xl tracking-tight text-on-surface">
+                Safe & Secure
+              </h3>
+            </div>
+            <p class="text-on-surface-variant text-sm leading-relaxed">
+              Creates backups before modifying files. Preserves existing settings. Restores from backup if something
+              fails.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- What Gets Installed Section -->
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24">
+      <div class="flex items-center gap-3 mb-8">
+        <span
+          class="font-label text-primary-container text-[10px] tracking-widest font-bold px-3 py-1 bg-primary-container/20 rounded-full">
+          ONE-COMMAND RECOMMENDED
+        </span>
+      </div>
+
+      <div
+        class="bg-surface-container-lowest p-6 md:p-8 rounded-2xl border border-outline-variant/20 font-mono text-sm">
+        <pre class="text-on-surface-variant text-xs md:text-sm overflow-x-auto">
+          <code>
+            <span class="text-secondary"># Recommended install:</span>
+            <span class="text-primary-container">curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash</span>
+            <span class="text-secondary"># What gets created:</span>
+            <span class="text-secondary">.github/</span>
+            <span class="text-secondary">└──</span> copilot-instructions.md
+            <span class="text-outline"># AI instructions for Copilot</span>
+            <span class="text-secondary">.vscode/settings.json</span>
+            <span class="text-outline"># Updated with Copilot config</span>
+          </code>
+        </pre>
+      </div>
+    </section>
+
     <!-- Requirements Section -->
-    <section class="max-w-4xl mx-auto mb-24">
-      <div class="glass-panel p-8 md:p-12 rounded-xl border-l-4 border-secondary relative overflow-hidden">
-        <h2 class="font-headline font-bold text-2xl md:text-3xl text-on-surface mb-6 tracking-tight">
-          Requirements
-        </h2>
-        <ul class="space-y-3 text-on-surface-variant">
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
-            <span><strong class="text-on-surface">Git</strong> (for clone
-              method)</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
-            <span><strong class="text-on-surface">Bash</strong> (shell
-              environment)</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
-            <span><strong class="text-on-surface">Python3</strong> (required for
-              JSON merge)</span>
-          </li>
-          <li class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary text-sm" data-icon="check">check</span>
-            <span><strong class="text-on-surface">Make</strong> (optional)</span>
-          </li>
-        </ul>
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24" aria-labelledby="requirements-heading">
+      <!-- Gradient Background -->
+      <div class="relative rounded-3xl overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+          <div class="w-[300px] h-[300px] rounded-full bg-[#bef264] opacity-[0.06] blur-[80px]"></div>
+        </div>
+
+        <div class="relative glass-panel p-8 md:p-12 rounded-3xl border border-outline-variant/20">
+          <h2 id="requirements-heading"
+            class="font-headline font-bold text-2xl md:text-3xl text-on-surface mb-8 tracking-tight">
+            Requirements
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Software -->
+            <div>
+              <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-xl" data-icon="code">code</span>
+                Software
+              </h3>
+              <ul class="space-y-3 text-on-surface-variant">
+                <li
+                  class="flex items-center gap-3 p-3 bg-surface-container/30 rounded-xl border border-outline-variant/10">
+                  <svg class="w-6 h-6 text-[#bef264]" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 3v18l4 -2.5v-13l-4 -2.5" />
+                    <path d="M9.165 13.903l-4.165 3.597l-2 -1l4.333 -4.5m1.735 -1.802l6.932 -7.198v5l-4.795 4.141" />
+                    <path d="M16 16.5l-11 -10l-2 1l13 13.5" />
+                  </svg>
+                  <div>
+                    <strong class="text-on-surface block">VS Code</strong>
+                    <span class="text-xs text-on-surface-variant">Code editor</span>
+                  </div>
+                </li>
+                <li
+                  class="flex items-center gap-3 p-3 bg-surface-container/30 rounded-xl border border-outline-variant/10">
+                  <span class="material-symbols-outlined text-secondary text-xl"
+                    data-icon="auto_awesome">auto_awesome</span>
+                  <div>
+                    <strong class="text-on-surface block">GitHub Copilot</strong>
+                    <span class="text-xs text-on-surface-variant">Subscription required</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Tools -->
+            <div>
+              <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-container text-xl"
+                  data-icon="terminal">terminal</span>
+                Tools
+              </h3>
+              <ul class="space-y-3">
+                <li
+                  class="flex items-center gap-3 p-3 bg-surface-container/30 rounded-xl border border-outline-variant/10">
+                  <span class="material-symbols-outlined text-on-surface-variant text-xl"
+                    data-icon="check_circle">check_circle</span>
+                  <div>
+                    <strong class="text-on-surface">Git</strong>
+                  </div>
+                </li>
+                <li
+                  class="flex items-center gap-3 p-3 bg-surface-container/30 rounded-xl border border-outline-variant/10">
+                  <span class="material-symbols-outlined text-on-surface-variant text-xl"
+                    data-icon="check_circle">check_circle</span>
+                  <div>
+                    <strong class="text-on-surface">Bash</strong>
+                  </div>
+                </li>
+                <li
+                  class="flex items-center gap-3 p-3 bg-surface-container/30 rounded-xl border border-outline-variant/10">
+                  <span class="material-symbols-outlined text-on-surface-variant text-xl"
+                    data-icon="check_circle">check_circle</span>
+                  <div>
+                    <strong class="text-on-surface">Python3</strong>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="mt-8 text-on-surface-variant text-sm border-t border-outline-variant/20 pt-6">
+            <span class="material-symbols-outlined text-secondary text-sm align-middle mr-1"
+              data-icon="info">info</span>
+            This is a VS Code configuration tool that modifies your <code
+              class="font-mono text-xs bg-surface-container px-1 rounded">.vscode/settings.json</code> to enable
+            AI-powered commits with GitHub Copilot.
+          </p>
+        </div>
       </div>
     </section>
+
     <!-- Alternative Install Section -->
-    <section class="max-w-4xl mx-auto mb-24">
+    <section class="w-full max-w-7xl mx-auto mt-32 mb-24">
       <h2 class="font-headline font-bold text-3xl md:text-4xl text-on-surface mb-8 tracking-tight">
         Alternative Installation
       </h2>
       <div class="space-y-6">
-        <div class="bg-surface-container p-6 rounded-xl">
+        <div class="bg-surface-container p-6 rounded-xl border border-outline-variant/20">
           <p class="text-on-surface-variant text-sm mb-4">
             Clone and run locally:
           </p>
           <div class="relative">
-            <div class="bg-surface-container-lowest p-4 rounded-lg font-mono text-sm">
-              <code class="text-xs md:text-sm text-on-surface">git clone https://github.com/daesdev/github-ai.git<br />cd
-                  your-project<br /><span class="text-primary-container"
-                    >make install</span
-                  ><br /><span class="text-outline"># or</span><br /><span
-                    class="text-primary-container"
-                    >./install.sh</span
-                  ></code>
+            <div class="bg-surface-container-lowest p-4 rounded-lg font-mono text-sm border border-outline-variant/10">
+              <code
+                class="text-xs md:text-sm text-on-surface">git clone https://github.com/daesdev/github-ai.git<br />cd your-project<br /><span class="text-primary-container">make install</span><br /><span class="text-outline"># or</span><br /><span class="text-primary-container">./install.sh</span></code>
             </div>
           </div>
         </div>
       </div>
     </section>
   </main>
+
   <!-- Footer -->
   <footer class="bg-[#0e0e0e] border-t border-[#bef264]/10">
     <div class="flex flex-col md:flex-row justify-between items-center w-full px-8 py-12 max-w-7xl mx-auto gap-8">
       <div class="flex flex-col items-center md:items-start gap-2">
-        <span class="text-[#bef264] font-bold font-inter tracking-tighter">GITHUB AI SETUP</span>
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#bef264]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 3v18l4 -2.5v-13l-4 -2.5" />
+            <path d="M9.165 13.903l-4.165 3.597l-2 -1l4.333 -4.5m1.735 -1.802l6.932 -7.198v5l-4.795 4.141" />
+            <path d="M16 16.5l-11 -10l-2 1l13 13.5" />
+          </svg>
+          <span class="text-[#bef264] font-bold font-inter tracking-tight">VS Code AI Setup</span>
+        </div>
+        <p class="font-mono text-[10px] tracking-widest uppercase text-slate-500">@ 2026 vscode setup ai • MIT License.
+        </p>
         <p class="font-mono text-[10px] tracking-widest uppercase text-slate-500">
-          MIT License. Built with AI.
-          <a href="https://daes.dev" class="text-primary-container hover:underline">by daesdev</a>
+          Built with AI.
+          <a href="https://daes.dev" class="text-primary-container hover:underline lowercase">by daesdev</a>
         </p>
       </div>
       <div class="flex gap-8">
@@ -365,16 +595,17 @@
       </div>
     </div>
   </footer>
+
   <div id="toast"
     class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-primary-container text-on-primary font-label text-xs tracking-widest rounded-sm shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
     Copied to clipboard!
   </div>
+
   <script>
     const toast = document.getElementById('toast')
 
     function copyInstall() {
-      const curl =
-        'curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash'
+      const curl = 'curl -sL https://raw.githubusercontent.com/daesdev/github-ai/main/install.sh | bash'
       navigator.clipboard.writeText(curl)
       toast.textContent = 'Copied! Paste in terminal'
       toast.style.opacity = '1'

@@ -1,10 +1,10 @@
-# CLAUDE.md — GitHub AI Setup
+# CLAUDE.md — VS Code AI Setup
 
 Context file for AI assistants working on this repository.
 
 ## Project Overview
 
-This repository provides installation scripts and configuration files to help developers set up GitHub Copilot with custom commit message and pull request instructions using AI-powered generation.
+This repository provides a VS Code configuration tool that sets up GitHub Copilot with custom commit message and pull request instructions using AI-powered generation.
 
 ## Purpose
 
