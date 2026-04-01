@@ -1,10 +1,10 @@
-# GitHub AI Setup
+# VS Code AI Setup
 
-Set up GitHub Copilot with custom commit message and pull request instructions for your projects using AI.
+A VS Code configuration tool that sets up GitHub Copilot with custom commit message and pull request instructions using AI.
 
 ## What is this?
 
-This repo provides instructions that make GitHub Copilot generate better commit messages and PR descriptions following Conventional Commits format using AI-powered generation.
+This is a VS Code configuration tool that modifies your `.vscode/settings.json` to point GitHub Copilot to custom instructions. When you commit or create a PR, Copilot generates optimized messages following Conventional Commits format.
 
 ## Quick Install (One Command)
 
@@ -46,49 +46,32 @@ The installer creates these files in your project:
 ```
 .github/
 └── copilot-instructions.md    # AI instructions for commits and PRs
-```
 
-And adds this to `.vscode/settings.json`:
-
-```json
-{
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "file": ".github/copilot-instructions.md"
-    }
-  ],
-  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
-    {
-      "file": ".github/copilot-instructions.md"
-    }
-  ]
-}
+.vscode/settings.json           # Updated with Copilot configuration
 ```
 
 ## How It Works
 
-GitHub Copilot uses the instruction file to generate:
-- **Commit Messages**: AI-generated messages following Conventional Commits format
-- **PR Descriptions**: AI-generated titles and descriptions with structured templates
+1. Run the install command
+2. The script creates `.github/copilot-instructions.md` with your custom AI instructions
+3. It updates `.vscode/settings.json` to point GitHub Copilot to the instructions file
+4. When you commit or create a PR, Copilot reads your instructions and generates optimized messages
 
-The settings point Copilot to `.github/copilot-instructions.md`.
+## Requirements
 
-GitHub Copilot uses the instruction files to generate:
-- **Commit Messages**: AI-generated messages following Conventional Commits format
-- **PR Descriptions**: AI-generated titles and descriptions with structured templates
+### Software
+- **VS Code** - Code editor
+- **GitHub Copilot** - Subscription required (not the free tier)
 
-The settings point Copilot to the instruction files in `.github/ai/`.
-
-## Backup & Safety
-
-Before modifying `.vscode/settings.json`, the installer:
-1. Creates a backup in `~/.daes/` with timestamp
-2. Only adds new keys if they don't exist (preserves existing settings)
-3. Restores from backup if something fails
+### Tools
+- Git
+- Bash
+- Python3 (required for JSON merge)
 
 ## Landing Page
 
 The project includes a landing page at `web/index.html` that displays:
+
 - Installation command
 - Features overview
 - Version badge (auto-updates on release via GitHub Actions)
@@ -104,13 +87,6 @@ wrangler pages deploy web --project-name=github-ai
 ```
 
 The landing page will be available at `vscode.daes.dev`
-
-## Requirements
-
-- Git (for clone method)
-- Bash
-- Python3 (required for JSON merge)
-- (Optional) Make
 
 ## Contributing
 

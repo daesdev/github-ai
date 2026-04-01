@@ -1,27 +1,27 @@
 ---
-name: Reglas de Proyecto
-description: Instrucciones para commits y PRs
+name: Project Rules
+description: Instructions for commits and PRs
 ---
 
-# Reglas para Mensajes de Commit
+# Commit Message Rules
 
-- Usa el formato Conventional Commits (feat ✨, fix 🐛, etc.).
-- Formato: `<type>(<scope>): <emoji> <subject>`
+- Use Conventional Commits format (feat ✨, fix 🐛, etc.).
+- Format: `<type>(<scope>): <emoji> <subject>`
 
-## Types permitidos
+## Allowed Types
 
-- **feat ✨**: Nuevas funcionalidades
-- **fix 🐛**: Corrección de bugs
-- **chore 🔧**: Tareas de mantenimiento
-- **refactor 🛠️**: Refactorización de código
-- **docs 📝**: Documentación
-- **style 🎨**: Estilos (formateo)
-- **test ✅**: Pruebas
-- **build 📦**: Build y dependencias
-- **ci 👷**: Configuración de CI/CD
-- **perf ⚡**: Optimizaciones de rendimiento
+- **feat ✨**: New features
+- **fix 🐛**: Bug fixes
+- **chore 🔧**: Maintenance tasks
+- **refactor 🛠️**: Code refactoring
+- **docs 📝**: Documentation
+- **style 🎨**: Styles (formatting)
+- **test ✅**: Tests
+- **build 📦**: Build and dependencies
+- **ci 👷**: CI/CD configuration
+- **perf ⚡**: Performance optimizations
 
-## Ejemplos
+## Examples
 
 - `feat(ui): ✨ Add floating contact button`
 - `fix(api): 🐛 Resolve user data fetch timeout`
@@ -29,16 +29,16 @@ description: Instrucciones para commits y PRs
 - `refactor: 🛠️ Simplify authentication flow`
 - `chore: 🔧 Update dependencies`
 
-## Reglas adicionales
+## Additional Rules
 
-- **Scope**: Área afectada (ui, api, layout, content), en minúsculas
-- **Subject**: Imperativo, claro, máximo 72 caracteres, sin punto al final
-- **Body**: Explica el POR QUÉ (no el CÓMO). Deja línea en blanco después del título
-- **Footer**: Para breaking changes o issues. Ejemplo: `Closes #123`
+- **Scope**: Affected area (ui, api, layout, content), lowercase
+- **Subject**: Imperative, clear, maximum 72 characters, no period at the end
+- **Body**: Explain the WHY (not the HOW). Leave a blank line after the title
+- **Footer**: For breaking changes or issues. Example: `Closes #123`
 
-## Casos especiales
+## Special Cases
 
-Si hay cambios no relacionados, usa un solo título y agrega al final:
+If there are unrelated changes, use a single title and add at the end:
 
 ```
 NOTE: staged changes include unrelated work; consider splitting commits.
@@ -46,35 +46,40 @@ NOTE: staged changes include unrelated work; consider splitting commits.
 
 ---
 
-# Reglas para Pull Requests
+# Pull Request Rules
 
-- Incluye siempre una sección de "Cambios clave".
-- Título en imperativo, menos de 50 caracteres.
-- Descripción siguiendo estructura What/Why/How.
+- Always include a "Key Changes" section.
+- Title in imperative mood, less than 50 characters.
+- Description following What/Why/How structure.
 
-## Estructura de PR
+## PR Structure
 
-### Título
-- Usa el modo imperativo (ej: "Add feature" no "Added feature")
-- Mantén menos de 50 caracteres
-- Se específico sobre qué cambió
+### Title
 
-### Descripción
+- Use imperative mood (e.g., "Add feature" not "Added feature")
+- Keep it under 50 characters
+- Be specific about what changed
 
-**Cambios clave**: Qué se modificó
-- Lista las principales modificaciones
-- Explica el propósito de cada cambio
+### Description
 
-**Por qué**: Problema que resuelve
-- Describe el problema que se está resolviendo
-- Referencia issues relacionados (ej: `Fixes #123`, `Closes #456`)
+**Key Changes**: What was modified
 
-**Cómo probar**: Instrucciones de testing
-- Proporciona instrucciones paso a paso
-- Incluye los resultados esperados
+- List the main modifications
+- Explain the purpose of each change
 
-**Notas adicionales** (opcional):
+**Why**: Problem it solves
+
+- Describe the problem being solved
+- Reference related issues (e.g., `Fixes #123`, `Closes #456`)
+
+**How to Test**: Testing instructions
+
+- Provide step-by-step instructions
+- Include expected results
+
+**Additional Notes** (optional):
+
 - Breaking changes
-- Dependencias agregadas/eliminadas
-- Cambios de configuración necesarios
-- PRs o documentación relacionada
+- Dependencies added/removed
+- Necessary configuration changes
+- Related PRs or documentation
