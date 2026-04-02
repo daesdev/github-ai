@@ -62,21 +62,29 @@ restore_settings() {
 
 configure_vscode_settings() {
     mkdir -p .vscode
-    
+
     backup_settings || true
-    
+
     if ! command -v python3 &> /dev/null; then
         echo "  ❌ Python3 not found. Cannot configure VS Code settings."
         exit 1
     fi
-    
+
     python3 - << 'PYEOF'
 import json
 import os
 import sys
+import re
+import shutil
+from datetime import datetime
 
 settings_file = '.vscode/settings.json'
 backup_file = settings_file + '.bak'
+
+def strip_json_comments(content):
+    content = re.sub(r'//.*$', '', content, flags=re.MULTILINE)
+    content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+    return content
 
 commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
 commit_value = [{"file": ".github/copilot-instructions.md"}]
@@ -85,18 +93,25 @@ pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
 pr_value = [{"file": ".github/copilot-instructions.md"}]
 
 settings = {}
+original_content = ""
+
 if os.path.exists(settings_file):
     try:
         with open(settings_file, 'r') as f:
-            content = f.read().strip()
-            if content:
+            original_content = f.read().strip()
+            if original_content:
+                shutil.copy(settings_file, backup_file)
+                content = strip_json_comments(original_content)
                 settings = json.loads(content)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"  ⚠️  Invalid JSON (with comments): {e}")
         if os.path.exists(backup_file):
             try:
                 with open(backup_file, 'r') as f:
-                    settings = json.load(f)
-                print("  ⚠️  Invalid JSON, restored from backup")
+                    original_content = f.read().strip()
+                    content = strip_json_comments(original_content)
+                    settings = json.loads(content)
+                print("  ✅ Fixed JSON by stripping comments, preserved content")
             except:
                 settings = {}
         else:
@@ -123,9 +138,18 @@ try:
     print("✅ VS Code settings configured")
 except Exception as e:
     print(f"  ❌ Error writing settings.json: {e}")
+    if os.path.exists(backup_file):
+        try:
+            with open(backup_file, 'r') as f:
+                settings = json.load(f)
+            with open(settings_file, 'w') as f:
+                json.dump(settings, f, indent=2)
+            print("  ⚠️  Restored settings from backup")
+        except:
+            pass
     sys.exit(1)
 PYEOF
-    
+
     if [ $? -ne 0 ]; then
         echo "  ❌ Failed to configure settings, restoring backup..."
         restore_settings
@@ -136,38 +160,38 @@ PYEOF
 download_file() {
     local url="$1"
     local label="$2"
-    
+
     echo "  Downloading ${label}..." >&2
     local content
     content=$(curl -sL --fail "$url") || {
         echo "  ❌ Error: Could not download ${label}" >&2
         exit 1
     }
-    
+
     if echo "$content" | grep -q "404"; then
         echo "  ❌ Error: ${label} not found" >&2
         exit 1
     fi
-    
+
     echo "$content"
 }
 
 install_from_github() {
     TEMP_DIR=$(mktemp -d)
-    
+
     echo "📥 Downloading files from GitHub..."
-    
+
     local instructions_file
     instructions_file=$(download_file "$BASE_URL/.github/copilot-instructions.md" "copilot-instructions.md")
     echo "$instructions_file" > "$TEMP_DIR/copilot-instructions.md"
     echo "  ✅ Downloaded copilot-instructions.md"
-    
+
     mkdir -p .github
-    
+
     echo "📄 Installing instruction files..."
     cp -f "$TEMP_DIR/copilot-instructions.md" .github/
     echo "  ✅ Installed .github/copilot-instructions.md"
-    
+
     echo "📝 Configuring VS Code settings..."
     configure_vscode_settings
 }
@@ -179,18 +203,18 @@ install_from_local() {
     else
         script_dir="$(cd "$(dirname "$0")" && pwd)"
     fi
-    
+
     if [ ! -f "$script_dir/.github/copilot-instructions.md" ]; then
         echo "❌ Missing source file: $script_dir/.github/copilot-instructions.md"
         exit 1
     fi
-    
+
     mkdir -p .github
-    
+
     echo "📄 Installing instruction files..."
     cp -f "$script_dir/.github/copilot-instructions.md" .github/
     echo "  ✅ Installed .github/copilot-instructions.md"
-    
+
     echo "📝 Configuring VS Code settings..."
     configure_vscode_settings
 }
