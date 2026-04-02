@@ -74,9 +74,17 @@ configure_vscode_settings() {
 import json
 import os
 import sys
+import re
+import shutil
+from datetime import datetime
 
 settings_file = '.vscode/settings.json'
 backup_file = settings_file + '.bak'
+
+def strip_json_comments(content):
+    content = re.sub(r'//.*$', '', content, flags=re.MULTILINE)
+    content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+    return content
 
 commit_key = "github.copilot.chat.commitMessageGeneration.instructions"
 commit_value = [{"file": ".github/copilot-instructions.md"}]
@@ -85,18 +93,25 @@ pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
 pr_value = [{"file": ".github/copilot-instructions.md"}]
 
 settings = {}
+original_content = ""
+
 if os.path.exists(settings_file):
     try:
         with open(settings_file, 'r') as f:
-            content = f.read().strip()
-            if content:
+            original_content = f.read().strip()
+            if original_content:
+                shutil.copy(settings_file, backup_file)
+                content = strip_json_comments(original_content)
                 settings = json.loads(content)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"  ⚠️  Invalid JSON (with comments): {e}")
         if os.path.exists(backup_file):
             try:
                 with open(backup_file, 'r') as f:
-                    settings = json.load(f)
-                print("  ⚠️  Invalid JSON, restored from backup")
+                    original_content = f.read().strip()
+                    content = strip_json_comments(original_content)
+                    settings = json.loads(content)
+                print("  ✅ Fixed JSON by stripping comments, preserved content")
             except:
                 settings = {}
         else:
