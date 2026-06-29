@@ -92,6 +92,9 @@ commit_value = [{"file": ".github/copilot-instructions.md"}]
 pr_key = "github.copilot.chat.pullRequestDescriptionGeneration.instructions"
 pr_value = [{"file": ".github/copilot-instructions.md"}]
 
+copilot_enable_key = "github.copilot.enable"
+copilot_enable_value = {"*": True, "plaintext": False, "scminput": True}
+
 settings = {}
 original_content = ""
 
@@ -131,6 +134,19 @@ if pr_key not in settings:
     print(f"  ✅ Added: {pr_key}")
 else:
     print(f"  ⏭️  Skipped (exists): {pr_key}")
+
+# Enable Copilot in SCM input for commit message suggestions
+existing_enable = settings.get(copilot_enable_key, {})
+if not isinstance(existing_enable, dict):
+    existing_enable = {}
+if existing_enable.get("scminput") is not True:
+    existing_enable["scminput"] = True
+    existing_enable["*"] = existing_enable.get("*", True)
+    existing_enable["plaintext"] = existing_enable.get("plaintext", False)
+    settings[copilot_enable_key] = existing_enable
+    print(f"  ✅ Enabled: scminput = true in {copilot_enable_key}")
+else:
+    print(f"  ⏭️  Skipped (scminput already true): {copilot_enable_key}")
 
 try:
     with open(settings_file, 'w') as f:
