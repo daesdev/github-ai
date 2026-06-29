@@ -95,10 +95,11 @@ wrangler pages deploy web --project-name=github-ai
 
 The installer adds these keys to `.vscode/settings.json`:
 
-- `github.copilot.chat.commitMessageGeneration.instructions` - AI instructions for commit messages
-- `github.copilot.chat.pullRequestDescriptionGeneration.instructions` - AI instructions for PR descriptions
+- `github.copilot.chat.commitMessageGeneration.instructions` — AI instructions for commit messages
+- `github.copilot.chat.pullRequestDescriptionGeneration.instructions` — AI instructions for PR descriptions
+- `github.copilot.enable` — enables Copilot in SCM input (`scminput: true`) for inline suggestions
 
-Both use the format: `[{"file": ".github/copilot-instructions.md"}]`
+All use the format: `[{"file": ".github/copilot-instructions.md"}]`
 
 ## Installation Flow
 
@@ -106,7 +107,10 @@ Both use the format: `[{"file": ".github/copilot-instructions.md"}]`
 2. Script creates `.github/` directory in target project
 3. Copies `copilot-instructions.md` (updates if exist)
 4. Backs up existing `.vscode/settings.json` to `~/.daes/`
-5. Merges Copilot instruction keys into settings.json (preserves existing)
+5. Merges Copilot instruction keys into settings.json (preserves existing):
+   - `github.copilot.chat.commitMessageGeneration.instructions`
+   - `github.copilot.chat.pullRequestDescriptionGeneration.instructions`
+   - `github.copilot.enable` (enables `scminput`)
 6. User commits with AI-generated Conventional Commits format!
 
 ## Common Tasks
